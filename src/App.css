@@ -13,7 +13,7 @@
   height: auto;
   width: auto;
   color: #23272a;
-  background-color: #f6f6f6;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -105,12 +105,15 @@ button {
 } */
 
 /* Login */
-
+.userBadge{
+  max-width: min-content;
+  padding-right: 30px !important;
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #2f2f2f;
+    background-color: #212529;
   }
 
   a:hover {
