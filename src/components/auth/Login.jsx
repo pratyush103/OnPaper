@@ -8,7 +8,7 @@ const Login = () => {
   const passwordRef = useRef(null);
   const [error, setError] = useState({});
   const { login } = useContext(AuthContext);
-  const LoginServiceURL = "https://localhost:7293";
+  const LoginServiceURL = "https://onpaper-auth.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io"; // "https://localhost:7293"
 
   const handleSubmit = async (e) => {
     e.preventDefault();

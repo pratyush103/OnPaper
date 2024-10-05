@@ -30,8 +30,8 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <Navbar />
         <ErrorBoundary>
-          <Navbar />
           <Routing />
         </ErrorBoundary>
       </Router>

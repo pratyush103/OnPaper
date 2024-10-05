@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
 import { UserBadge } from "./user/userbadge";
 import { AuthContext } from "./auth/AuthContext";
 
 const Navbar = () => {
+  const { userInfo } = useContext(AuthContext);
+
   return (
     <nav
         id="mainNav"
@@ -17,7 +19,7 @@ const Navbar = () => {
           
           
             <ul className="navbar-nav mx-auto">
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link" to="/">
                   Home
                 </Link>
@@ -26,15 +28,15 @@ const Navbar = () => {
                 <Link className="nav-link" to="/dashboard">
                   Dashboard
                 </Link>
-              </li>
+              </li> */}
             </ul>
-            <Link
-              className="btn btn-primary shadow"
-              role="button"
-              to="/login"
-            >
-              Login
-            </Link>
+            {userInfo ? (
+              <UserBadge profilePicture={userInfo.profilePicture} fullName={userInfo.displayName} />
+            ) : (
+              <Link className="btn btn-primary shadow" role="button" to="/login">
+                Login
+              </Link>
+            )}
           </div>
       </nav>
   );

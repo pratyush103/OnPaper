@@ -11,7 +11,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const { login } = useContext(AuthContext);
-  const RegisterServiceURL = "https://localhost:7293";
+  const RegisterServiceURL = "https://onpaper-auth.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io";
 
   const validateInputs = () => {
     const newErrors = {};
