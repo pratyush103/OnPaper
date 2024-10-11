@@ -15,21 +15,7 @@ const Navbar = () => {
         <div className="container">
           <Link className="navbar-brand d-flex align-items-center" to="/">
             <span>OnPaper</span>
-          </Link>
-          
-          
-            <ul className="navbar-nav mx-auto">
-              {/* <li className="nav-item">
-                <Link className="nav-link" to="/">
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/dashboard">
-                  Dashboard
-                </Link>
-              </li> */}
-            </ul>
+          </Link>         
             {userInfo ? (
               <UserBadge profilePicture={userInfo.profilePicture} fullName={userInfo.displayName} />
             ) : (

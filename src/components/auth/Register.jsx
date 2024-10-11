@@ -17,6 +17,7 @@ const Register = () => {
     const newErrors = {};
     if (!fullname.trim()) newErrors.fullname = "Full name is required.";
     if (!username.trim()) newErrors.username = "Username is required.";
+    else if (/[#$\[\]/.]/.test(username)) newErrors.username = "Username cannot contain $, #, [, ], /, or .";
     if (!email.trim()) newErrors.email = "Email is required.";
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email address.";
     if (!password.trim()) newErrors.password = "Password is required.";
