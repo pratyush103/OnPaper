@@ -85,21 +85,21 @@ export const UpdateProfile = () => {
       </div>
       <div className="form-group">
         <label>Full Name:</label>
-        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+        <input type="text" value={userInfo.displayName} onChange={(e) => setFullName(e.target.value)} />
       </div>
-      <div className="form-group">
+      {/* <div className="form-group">
         <label>Password:</label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      <div className="form-group">
+      </div> */}
+      {/* <div className="form-group">
         <label>Profile Picture:</label>
         <input type="file" onChange={handleProfilePictureChange} />
         {profilePicture && <img src={profilePicture} alt="Profile" className="profile-preview" />}
-      </div>
-      <div className="form-group">
+      </div> */}
+      {/* <div className="form-group">
         <label>Phone Number:</label>
         <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
-      </div>
+      </div> */}
       <button type="submit" className="update-button">Update Profile</button>
     </form>
   );

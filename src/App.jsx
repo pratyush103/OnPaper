@@ -10,7 +10,9 @@ import Dashboard from "./components/trade/Dashboard";
 import Profile from "./components/user/Profile";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import UpdateProfile from "./components/user/UpdateProfile";
+import TradingViewNewsWidget from "./components/trade/TradingViewNewsWidget";
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 function App() {
   return (
     <AuthProvider>
@@ -24,6 +26,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<PrivateRoute component={Dashboard} />} />
             <Route path="/update-profile" element={<PrivateRoute component={UpdateProfile} />} />
+            <Route path="/trade/news" element={<TradingViewNewsWidget />} />
           </Routes>
         </ErrorBoundary>
       </Router>
