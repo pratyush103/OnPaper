@@ -22,6 +22,7 @@ const NavbarComponent = () => {
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
             <Nav.Link as={Link} to="/trade/news">News</Nav.Link>
+            <Nav.Link as={Link} to="/trade/Tradeview">TradeView</Nav.Link>
           </Nav>
 
           <Nav className="ms-auto">

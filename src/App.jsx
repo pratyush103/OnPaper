@@ -11,6 +11,7 @@ import Profile from "./components/user/Profile";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import UpdateProfile from "./components/user/UpdateProfile";
 import TradingViewNewsWidget from "./components/trade/TradingViewNewsWidget";
+import TradingViewWidget from "./components/trade/TradingViewWidget";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/dashboard" element={<PrivateRoute component={Dashboard} />} />
             <Route path="/update-profile" element={<PrivateRoute component={UpdateProfile} />} />
             <Route path="/trade/news" element={<TradingViewNewsWidget />} />
+            <Route path="/trade/Tradeview" element={<TradingViewWidget />} />
           </Routes>
         </ErrorBoundary>
       </Router>
