@@ -1,7 +1,7 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import './Homestyles.css'; // Assuming you have a CSS file for additional styles
+// import './Homestyles.css'; // Assuming you have a CSS file for additional styles
 
 const Home = () => {
     return (
@@ -28,7 +28,7 @@ const Home = () => {
                 <div className="container px-4 text-center">
                     <h1 className="fw-bolder">Welcome to Scrolling Nav</h1>
                     <p className="lead">A functional Bootstrap 5 boilerplate for one page scrolling websites</p>
-                    <a className="btn btn-lg btn-light" href="#about">Start scrolling!</a>
+                    <a className="btn btn-lg " href="#about">Start scrolling!</a>
                 </div>
             </header>
 
@@ -51,7 +51,7 @@ const Home = () => {
             </section>
 
             {/* Services section */}
-            <section className="bg-light" id="services">
+            <section className="" id="services">
                 <div className="container px-4">
                     <div className="row gx-4 justify-content-center">
                         <div className="col-lg-8">

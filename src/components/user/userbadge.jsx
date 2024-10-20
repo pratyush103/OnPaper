@@ -1,62 +1,173 @@
-import React, { useContext, useState } from "react";
-import PropTypes from "prop-types";
-import { AuthContext } from "../auth/AuthContext";
-import { Link } from "react-router-dom";
-import { Image, Dropdown } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Dropdown, Image } from 'react-bootstrap';
+import { CircleUser, Settings, ArrowRight } from 'lucide-react';
 
-const UserBadge = ({ profilePicture, fullName }) => {
-  const { logout } = useContext(AuthContext);
+export const UserBadge = ({ profilePicture, fullName, onLogout }) => {
   const [imgError, setImgError] = useState(false);
 
-  return (
-    <div className="d-flex align-items-center">
-      {/* Profile Image */}
-      {profilePicture && !imgError ? (
-        <Image
-          src={profilePicture}
-          alt="User Profile"
-          width="30"
-          height="30"
-          roundedCircle
-          className="me-2"
-          onError={() => setImgError(true)} // Handle image load errors
-        />
-      ) : (
-        <div className="placeholder-circle me-2"> {/* Placeholder in case of error */}
-          <span className="text-light">U</span>
-        </div>
-      )}
-      <span className="text-light me-3">{fullName}</span>
+  // Get initials for avatar fallback
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
-      {/* Dropdown Toggle */}
-      <Dropdown>
-        <Dropdown.Toggle variant="primary" id="dropdown-basic" className="userBadge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-gear" viewBox="0 0 16 16">
-            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
-            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+  // Custom toggle component to avoid default button styling
+  const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+    <div
+      ref={ref}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+      className="d-flex align-items-center gap-2 py-1 px-2 rounded-3 user-badge-toggle"
+      style={{ cursor: 'pointer' }}
+    >
+      {children}
+    </div>
+  ));
+
+  const handleLogout = () => {
+    if (window.confirm("Do you want to Logout?")) {
+      onLogout?.();
+    }
+  };
+
+  return (
+    <>
+      <style type="text/css">
+        {`
+          .user-badge-toggle {
+            transition: background-color 0.2s ease;
+          }
+          
+          .user-badge-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+          }
+
+          .dark .user-badge-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+
+          .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 14px;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+          }
+
+          .dropdown-menu {
+            min-width: 200px;
+            padding: 0.5rem 0;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          }
+
+          .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: #333;
+            transition: background-color 0.2s ease;
+          }
+
+          .dropdown-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+          }
+
+          .dropdown-item.danger {
+            color: #dc3545;
+          }
+
+          .dropdown-item.danger:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+          }
+
+          .dropdown-divider {
+            margin: 0.5rem 0;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: #f2f2f2;
+            transition: background-color 0.2s ease;
+          }
+          }
+        `}
+      </style>
+
+      <Dropdown align="end">
+        <Dropdown.Toggle as={CustomToggle}>
+          {profilePicture && !imgError ? (
+            <Image
+              src={profilePicture}
+              alt={fullName}
+              className="profile-avatar"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="profile-avatar bg-primary text-white">
+              {getInitials(fullName)}
+            </div>
+          )}
+          <span className="d-none d-sm-inline fw-medium text-white">{fullName}</span>
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 16 16" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            className="ms-1"
+          >
+            <path 
+              d="M4 6L8 10L12 6" 
+              stroke="white" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            />
           </svg>
         </Dropdown.Toggle>
 
-        <Dropdown.Menu align="right">
-          <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
-          {/* <Dropdown.Item as={Link} to="/dashboard">Dashboard</Dropdown.Item> */}
-          <Dropdown.Item
-            variant="danger"
-            onClick={() => {
-              if (window.confirm("Do you want to Logout?")) logout();
-            }}
+        <Dropdown.Menu>
+          <Dropdown.Item href="/profile" className="py-2">
+            <CircleUser size={16} />
+            <span>Profile</span>
+          </Dropdown.Item>
+          
+          <Dropdown.Item href="/settings" className="py-2">
+            <Settings size={16} />
+            <span>Settings</span>
+          </Dropdown.Item>
+          
+          <Dropdown.Divider />
+          
+          <Dropdown.Item 
+            onClick={handleLogout} 
+            className="danger py-2"
           >
-            Logout
+            <ArrowRight size={16} />
+            <span>Logout</span>
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-    </div>
+    </>
   );
 };
 
-UserBadge.propTypes = {
-  profilePicture: PropTypes.string,
-  fullName: PropTypes.string.isRequired,
-};
-
-export { UserBadge };
+// export default UserBadge;

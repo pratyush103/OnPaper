@@ -1,19 +1,33 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-const TradingViewAdvancedChart = ({ symbol = "NASDAQ:AAPL", width = "1500", height = "610" }) => {
+const TradingViewAdvancedChart = ({ symbol = "BSE:WIPRO", width = "1500", height = "610" }) => {
   const containerRef = useRef(null);
+  const [theme, setTheme] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => setTheme(e.matches ? 'dark' : 'light');
+    
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, [theme]);
+
+  
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
     script.async = true;
     script.type = "text/javascript";
+    
     script.innerHTML = JSON.stringify({
       width: width,
       height: height,
       symbol: symbol,
       timezone: "Asia/Kolkata",
-      theme: "light",
+      theme: theme,
       style: "1",
       locale: "en",
       withdateranges: true,
@@ -30,13 +44,13 @@ const TradingViewAdvancedChart = ({ symbol = "NASDAQ:AAPL", width = "1500", heig
     containerRef.current.appendChild(script); // Add new script
 
     return () => {
-      containerRef.current.innerHTML = ""; // Clean up on unmount
+      // containerRef.current.innerHTML = ""; // Clean up on unmount
     };
-  }, [symbol, width, height]);
+  }, [symbol, width, height,theme]);
 
   return (
     <div
-      className="tradingview-widget-container"
+      className="tradingview-widget-container rounded"
       ref={containerRef}
       style={{ width: width, height: height }}
     >

@@ -29,7 +29,7 @@ const NavbarComponent = () => {
             {userInfo ? (
               <UserBadge
                 profilePicture={userInfo.profilePicture}
-                fullName={userInfo.fullName} />
+                fullName={userInfo.displayName} />
             ) : (
               <Button as={Link} to="/login" variant="primary" className="shadow">
                 Login

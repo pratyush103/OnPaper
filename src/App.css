@@ -33,7 +33,9 @@
   text-align: center;
 } */
 
-
+.tradingview-widget-copyright{
+  display: none;
+}
 
 .logo {
   height: 6em;
@@ -51,9 +53,9 @@
   justify-content: center;
 }
 
-.navbar {
+/* .navbar {
   background-color: #2d2c38;
-}
+} */
 
 
 

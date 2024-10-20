@@ -1,10 +1,24 @@
 // src/components/TickerWidget.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const TickerWidget = () => {
+  const [theme, setTheme] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => setTheme(e.matches ? 'dark' : 'light');
+    
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, [theme]);
+
   useEffect(() => {
     // This will append the TradingView script to the document body
     const script = document.createElement("script");
+    script.className = "tradingview-widget-container__widget__script";
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js";
     script.async = true;
     script.innerHTML = JSON.stringify({
@@ -18,17 +32,18 @@ const TickerWidget = () => {
       showSymbolLogo: true,
       isTransparent: false,
       displayMode: "adaptive",
-      colorTheme: "light",
+      colorTheme: theme,
       locale: "en",
     });
-
-    document.querySelector(".tradingview-widget-container__widget").appendChild(script);
+    
+    const widgetContainer = document.querySelector(".tradingview-widget-container__widget");
+    widgetContainer.appendChild(script);
 
     // Cleanup function to remove the script when the component unmounts
     return () => {
-      document.querySelector(".tradingview-widget-container__widget").removeChild(script);
+      widgetContainer.innerHTML = "";
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div className="tradingview-widget-container">

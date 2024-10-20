@@ -7,6 +7,8 @@ import Dashboard from "./components/trade/Dashboard";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import Profile from './components/user/Profile';
 import UpdateProfile from './components/user/UpdateProfile';
+import TradingViewWidget from "./components/trade/TradingViewWidget";
+import TradingViewNewsWidget from "./components/trade/TradingViewNewsWidget";
 
 function Routing() {
     return (
@@ -17,6 +19,8 @@ function Routing() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<PrivateRoute component={Dashboard} />} />
+            <Route path="/trade/news" element={<TradingViewNewsWidget />} />
+            <Route path="/trade/Tradeview" element={<TradingViewWidget />} />
         </Routes>
     );
 }

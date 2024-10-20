@@ -5,7 +5,7 @@ import { UpdateProfile } from '/src/components/user/UpdateProfile.jsx';
 
 const Profile = () => {
   const { userInfo } = useContext(AuthContext);
-  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("profilePhoto") || userInfo.profilePhoto);
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("profilePhoto") || userInfo.profilePicture);
 
   useEffect(() => {
     // Update localStorage whenever profilePhoto state changes

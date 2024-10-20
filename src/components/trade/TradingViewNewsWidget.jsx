@@ -1,8 +1,21 @@
 // TradingViewNewsWidget.jsx
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const TradingViewNewsWidget = () => {
   const containerRef = useRef(null);
+
+  const [theme, setTheme] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => setTheme(e.matches ? 'dark' : 'light');
+    
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, [theme]);
 
   useEffect(() => {
     // Create the script element for the TradingView widget
@@ -16,7 +29,7 @@ const TradingViewNewsWidget = () => {
       displayMode: "adaptive",
       width: "1500",
       height: "1000",
-      colorTheme: "light", // Set to "dark" for dark mode
+      colorTheme: theme, // Set to "dark" for dark mode
       locale: "en"
     });
 
@@ -30,7 +43,7 @@ const TradingViewNewsWidget = () => {
         container.innerHTML = ""; // Clear the container to remove the script
       }
     };
-  }, []);
+  }, [theme]);
 
   return (
     <div className="tradingview-widget-container" ref={containerRef}>
