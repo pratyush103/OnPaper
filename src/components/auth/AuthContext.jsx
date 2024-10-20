@@ -1,21 +1,33 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect , useContext } from "react";
+import { TradeContext } from "../trade/TradeProvider";
 
 const AuthContext = createContext();
+const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }) => {
-  const [authToken, setAuthToken] = useState(localStorage.getItem("token"));
+  const [authToken, setAuthToken] = useState(JSON.parse(localStorage.getItem("token")));
   const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem("user")));
+
+  // useEffect(() => {
+  //   if (authToken) {
+  //     readUser(authToken);
+  //   }
+  // }, [authToken, readUser]);
+
+  const updateToken = (idToken , refreshToken) =>{
+    const token = JSON.stringify({idToken: idToken, refreshToken: refreshToken});
+    localStorage.setItem("token", token);
+    setAuthToken(JSON.parse(token));
+  }
+  const updateUser = (user) =>{
+    const userInformation = JSON.stringify(user);
+    localStorage.setItem("user", userInformation);
+    setUserInfo(JSON.parse(userInformation));
+  }
 
   const login = (token, user) => {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (!payload || typeof payload !== 'object') {
-        throw new Error('Invalid token');
-      }
-      if (!user || typeof user !== 'string') {
-        throw new Error('Invalid user object: ' + user);
-      }
-      localStorage.setItem("token", token);
+      localStorage.setItem("token", JSON.stringify(token));
       setAuthToken(token);
       localStorage.setItem("user", user);
       setUserInfo(JSON.parse(user));
@@ -32,10 +44,10 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ authToken, userInfo, login, logout, setUserInfo }}>
+    <AuthContext.Provider value={{ authToken, userInfo, login, logout, updateToken, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export { AuthContext, AuthProvider };
+export { AuthContext, AuthProvider, useAuth };

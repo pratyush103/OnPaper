@@ -2,6 +2,8 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { Link } from "react-router-dom";
+import { RegisterHandler } from './ReqResHandler'
+import { useToast } from '../app-status/ToastContext';
 
 const Register = () => {
   const [fullname, setFullname] = useState("");
@@ -11,6 +13,10 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const { login } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const { addToast } = useToast();
+  
+
   const RegisterServiceURL = "https://onpaper-auth.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io";
 
   const validateInputs = () => {
@@ -32,34 +38,44 @@ const Register = () => {
     if (!validateInputs()) return;
 
     try {
-      const response = await fetch(`${RegisterServiceURL}/Auth/Register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password, email, fullname }),
-      });
-
-      const data = await response.json();
-      
-      // const data = JSON.parse(responseText);
-      
-      if (data.error) {
-        setErrors({ form: data.error.message.toLowerCase().replace(/(^\w|\s\w)/g, m => m.toUpperCase()) +" :"+ data.error.code });
-        throw new Error(data.error);
-      }
-
-      if (data.idToken) {
-        const userInfo = JSON.stringify(data);
-        login(data.idToken, userInfo);
-        console.log("Registration successful");
-      } else {
-        setErrors({ form: "Registration failed. Please check your details and try again." });
-      }
-    } catch (error) {
-      setErrors({ form: "Registration failed. Please try again." });
-      console.error('Error:', error);
+      await RegisterHandler(username, password, email, fullname, setErrors, login, addToast);
+    } catch (e) {
+      console.error("Registration failed:", e);
+    } finally {
+      setLoading(false);
     }
+
+    
+
+    // try {
+    //   const response = await fetch(`${RegisterServiceURL}/Auth/Register`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ username, password, email, fullname }),
+    //   });
+
+    //   const data = await response.json();
+      
+    //   // const data = JSON.parse(responseText);
+      
+    //   if (data.error) {
+    //     setErrors({ form: data.error.message.toLowerCase().replace(/(^\w|\s\w)/g, m => m.toUpperCase()) +" :"+ data.error.code });
+    //     throw new Error(data.error);
+    //   }
+
+    //   if (data.idToken) {
+    //     const userInfo = JSON.stringify(data);
+    //     login(data.idToken, userInfo);
+    //     console.log("Registration successful");
+    //   } else {
+    //     setErrors({ form: "Registration failed. Please check your details and try again." });
+    //   }
+    // } catch (error) {
+    //   setErrors({ form: "Registration failed. Please try again." });
+    //   console.error('Error:', error);
+    // }
   };
 
   return (
@@ -146,7 +162,23 @@ const Register = () => {
       <div className="mb-3">
       <Link to="/login">Already have an account?</Link>
       </div>
-      <input type="submit" className="btn btn-primary d-block w-100" value="Register" />
+      <div className="me-3">
+                    <button
+                      className="btn btn-primary d-block w-100"
+                      type="submit"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      ) : (
+                        "Register"
+                      )}
+                    </button>
+                  </div>
     </form>
                     </div>
                 </div>

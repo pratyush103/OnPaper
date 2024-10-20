@@ -1,39 +1,57 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import { invoke } from "@tauri-apps/api/core";
+import "./App.css";
+import React, { useContext,useRef } from "react";
+import Routing from "./Routing";
 import { AuthProvider } from "./components/auth/AuthContext";
 import Navbar from "./components/Navbar";
+import { ToastProvider } from './components/app-status/ToastContext';
+import { BrowserRouter as Router } from "react-router-dom";
+import { useEffect } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Home from "./components/Home";
-import Login from "./components/auth/Login";
-import Register from "./components/auth/Register";
-import Dashboard from "./components/trade/Dashboard";
-import Profile from "./components/user/Profile";
-import PrivateRoute from "./components/auth/PrivateRoute";
-import UpdateProfile from "./components/user/UpdateProfile";
-import TradingViewNewsWidget from "./components/trade/TradingViewNewsWidget";
-import TradingViewWidget from "./components/trade/TradingViewWidget";
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { TradeProvider, TradeContext } from "./components/trade/TradeProvider";
+import { AuthContext } from "./components/auth/AuthContext";
+import { WebSocketManager } from "./components/trade/WebSocketManager";
+// App.jsx
 function App() {
+  
+  // const authContext = useContext(AuthContext);
+  useEffect(() => {
+    // const [theme, setTheme] = useState("light");
+    
+    
+    const updateTheme = () => {
+      const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = prefersDarkScheme ? "dark" : "light";
+      document.documentElement.setAttribute("data-bs-theme", theme);
+    };
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    updateTheme();
+    mediaQuery.addEventListener("change", updateTheme);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateTheme);
+    };
+  }, []);
+
   return (
-    <AuthProvider>
-      <Router>
-        <Navbar />
-        <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<PrivateRoute component={Profile} />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<PrivateRoute component={Dashboard} />} />
-            <Route path="/update-profile" element={<PrivateRoute component={UpdateProfile} />} />
-            <Route path="/trade/news" element={<TradingViewNewsWidget />} />
-            <Route path="/trade/Tradeview" element={<TradingViewWidget />} />
-          </Routes>
-        </ErrorBoundary>
-      </Router>
-    </AuthProvider>
+    <ToastProvider>
+        <AuthProvider>
+          <TradeProvider>
+            <WebSocketManager>
+            <Router>
+              <Navbar />
+              <ErrorBoundary>
+                <Routing />
+              </ErrorBoundary>
+            </Router>
+            </WebSocketManager>
+          </TradeProvider>  
+        </AuthProvider>
+    </ToastProvider>
   );
 }
 
-export default App;
+export default App ;
