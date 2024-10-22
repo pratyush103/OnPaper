@@ -69,10 +69,14 @@ export const UserStats = () => {
               <tr className="align-middle">
                 <td className="fw-medium text-muted">Balance</td>
                 <td className="text-end fw-bold">
-                  <AnimatedNumber 
-                    value={userData.Points ?? 0} 
-                    duration={1500} 
-                  />
+                  {userData ? (
+                    <AnimatedNumber 
+                      value={userData.Points ?? 0} 
+                      duration={1500} 
+                    />
+                  ) : (
+                    "N/A"
+                  )}
                 </td>
               </tr>
               <tr className="align-middle">

@@ -7,6 +7,7 @@ export const UserBadge = ({ profilePicture, fullName, onLogout }) => {
 
   // Get initials for avatar fallback
   const getInitials = (name) => {
+    if (!name) return ''; // Add this check
     return name
       .split(' ')
       .map(part => part[0])

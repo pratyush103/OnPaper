@@ -1,4 +1,3 @@
-// src/components/TickerWidget.jsx
 import React, { useEffect, useState } from "react";
 
 const TickerWidget = () => {
@@ -37,11 +36,17 @@ const TickerWidget = () => {
     });
     
     const widgetContainer = document.querySelector(".tradingview-widget-container__widget");
-    widgetContainer.appendChild(script);
+    if (widgetContainer) {
+      widgetContainer.appendChild(script);
+    } else {
+      console.error("Widget container not found");
+    }
 
     // Cleanup function to remove the script when the component unmounts
     return () => {
-      widgetContainer.innerHTML = "";
+      if (widgetContainer) {
+        widgetContainer.innerHTML = "";
+      }
     };
   }, [theme]);
 

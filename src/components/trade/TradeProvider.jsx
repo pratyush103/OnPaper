@@ -10,24 +10,29 @@ const API_BASE_URL =
 export const TradeContext = createContext();
 
 export const TradeProvider = ({ children }) => {
-  const [userData, setUserData] = useState(sessionStorage.getItem("userData"));
-  const [apiData, setApiData] = useState(sessionStorage.getItem("apiData"));
+  const [userData, setUserData] = useState(
+    JSON.parse(sessionStorage.getItem("userData"))
+  );
+  const [apiData, setApiData] = useState(
+    JSON.parse(sessionStorage.getItem("apiData"))
+  );
   const { addToast } = useToast();
   const { authToken, updateToken, userInfo } = useAuth();
+
   useEffect(() => {
     if (!apiData || (Date.now() - apiData.TimeStamp * 1000) > 10 * 60 * 60 * 1000) {
       getAPI();
     }
 
-    return () => {
-      setApiData(null);
-    };
-  }, []);
-    useEffect(() => {
-        if (authToken) {
-            readUser(authToken, userInfo.localId);
-        }
-    }, [authToken]);
+
+  }, [apiData]);
+
+  useEffect(() => {
+    if (authToken && userInfo?.localId) {
+      readUser(authToken, userInfo.localId);
+    }
+  }, [authToken, userInfo]);
+
   const enterTrade = async (tradeData) => {
     try {
       const verifiedToken = await VerifyToken(authToken, updateToken);
@@ -42,12 +47,12 @@ export const TradeProvider = ({ children }) => {
       );
       const data = await ValidateResponse(response, addToast);
       if (data) {
+        addToast(
+          "success",
+          { Header: "Trade Successful", Message: "This is a success message!" },
+          true
+        );
       }
-      addToast(
-        "success",
-        { Header: "Trade Successful", Message: "This is a success message!" },
-        true
-      );
       return data;
     } catch (error) {
       console.error("Error entering trade:", error);
@@ -77,7 +82,11 @@ export const TradeProvider = ({ children }) => {
 
   const readUser = async (authToken, userID) => {
     try {
-      const verifiedToken = await VerifyToken(authToken, updateToken); //authToken, authContext
+      if (!userID) {
+        throw new Error("UserID is missing or invalid");
+      }
+
+      const verifiedToken = await VerifyToken(authToken, updateToken);
       const response = await axios.get(`${API_BASE_URL}/ReadUser`, {
         params: {
           AuthToken: verifiedToken,
@@ -125,6 +134,7 @@ export const TradeProvider = ({ children }) => {
 };
 
 export const useTrade = () => useContext(TradeContext);
+
 
 // const TradeHandler = () => {
 //     const { enterTrade, exitTrade, readUser, getAPI } = useTrade();
