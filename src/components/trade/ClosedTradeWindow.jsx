@@ -1,6 +1,8 @@
-import React from "react";
-import { Card, Badge } from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import { Button, Card, Badge, Spinner } from "react-bootstrap";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { useTrade } from "./TradeProvider";
+
 
 const ClosedTradeWindow = ({ trade }) => {
   const {
@@ -16,6 +18,44 @@ const ClosedTradeWindow = ({ trade }) => {
     IsActive,
     TakeProfit,
   } = trade;
+
+  const { exitTrade, readUser, addToWatchList, removeFromWatchList, userData } = useTrade();
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Check if stock is in watchlist using both StockCode and sanitized StockToken
+  useEffect(() => {
+    if (userData?.watchlist) {
+      const isCodeInWatchlist = StockCode in userData.watchlist;
+      const sanitizedToken = StockToken.replace(/[.!#/]/g, "_");
+      const isTokenInWatchlist = sanitizedToken in userData.watchlist;
+      setIsInWatchlist(isCodeInWatchlist || isTokenInWatchlist);
+    }
+  }, [userData, StockCode, StockToken]);
+
+  const handleWatchlistToggle = async () => {
+    setIsLoading(true);
+    try {
+      if (isInWatchlist) {
+        // Try removing using both StockCode and StockToken
+        await removeFromWatchList(StockToken);
+        if (StockCode in (userData?.watchlist || {})) {
+          await removeFromWatchList(StockCode);
+        }
+      } else {
+        await addToWatchList(StockCode, StockName, StockToken, ExchangeCode);
+      }
+      await readUser(); // Refresh user data
+    } catch (error) {
+      console.error('Failed to update watchlist:', error);
+      addToast("error", {
+        Header: "Watchlist Update Failed",
+        Message: "Failed to update watchlist. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const formatPrice = (price) =>
     price?.toLocaleString("en-IN", {
@@ -52,6 +92,21 @@ const ClosedTradeWindow = ({ trade }) => {
             <Badge bg={ExchangeCode === "NSE" ? "primary" : "danger"}>
               {ExchangeCode}
             </Badge>
+            <Button 
+              variant={isInWatchlist ? "outline-secondary" : "outline-primary"}
+              onClick={handleWatchlistToggle} 
+              disabled={isLoading}
+              className="d-flex align-items-center gap-1"
+            >
+              {isLoading ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                <>
+                  {isInWatchlist ? <EyeOff size={16} /> : <Eye size={16} />}
+                  <span>{isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}</span>
+                </>
+              )}
+            </Button>
           </div>
           <span className="text-muted">{StockName}</span>
         </div>

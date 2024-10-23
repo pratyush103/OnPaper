@@ -1,0 +1,31 @@
+:root {
+    --background-color: #f3f4f6;
+    --text-color: #1f2937;
+    --header-background-color: #1e3a8a;
+    --header-text-color: white;
+    --accent-color: #60a5fa;
+    --button-background-color: #60a5fa;
+    --button-hover-color: #1e3a8a;
+    --button-text-color: white;
+    --section-background-color: #ffffff;
+    --card-background-color: #ffffff;
+    --footer-text-color: white;
+    --feature-card-text-color: #1f2937; /* Default feature card text color */
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #1f2937;
+      --text-color: #ffffff;
+      --header-background-color: #60a5fa;
+      --header-text-color: #1f2937;
+      --accent-color: #1e3a8a;
+      --button-background-color: #1e3a8a;
+      --button-hover-color: #60a5fa;
+      --button-text-color: #f3f4f6;
+      --section-background-color: #2d3748;
+      --card-background-color: #2d3748;
+      --footer-text-color: #ffffff;
+      --feature-card-text-color: white; /* Feature card text will be white in dark mode */
+    }
+  }

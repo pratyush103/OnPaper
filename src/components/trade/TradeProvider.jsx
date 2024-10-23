@@ -116,9 +116,70 @@ export const TradeProvider = ({ children }) => {
     }
   };
 
+  const addToWatchList = async (stockCode, stockName, stockToken, exchangeCode) => {
+    try {
+      const sanitizedStockToken = stockToken.replace(/[.!#/]/g, "_");
+      const verifiedToken = await VerifyToken(authToken, updateToken);
+      const response = await axios.put(
+        `${API_BASE_URL}/AddToWatchList`,
+        JSON.stringify({
+          authToken: verifiedToken,
+          userID: userInfo.localId,
+          stockCode: stockCode,
+          stockName: stockName,
+          stockToken: sanitizedStockToken,
+          exchangeCode: exchangeCode,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await ValidateResponse(response, addToast);
+      addToast("success", {
+        Header: "Success",
+        Message: "Stock added to watchlist successfully",
+      });
+      return data;
+    } catch (error) {
+      console.error("Error adding to watchlist:", error);
+      throw error;
+    }
+  };
+
+  const removeFromWatchList = async (stockToken) => {
+    try {
+      const sanitizedStockToken = stockToken.replace(/[.!#/]/g, "_");
+      const verifiedToken = await VerifyToken(authToken, updateToken);
+      const response = await axios.delete(
+        `${API_BASE_URL}/RemoveFromWatch`,
+        {
+          data: JSON.stringify({
+            authToken: verifiedToken,
+            userID: userInfo.localId,
+            stockToken: sanitizedStockToken,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.data;
+      addToast("success", {
+        Header: "Success",
+        Message: "Stock removed from watchlist successfully",
+      });
+      return data;
+    } catch (error) {
+      console.error("Error removing from watchlist:", error);
+      throw error;
+    }
+  };
+
   return (
     <TradeContext.Provider
-      value={{ enterTrade, exitTrade, readUser, getAPI, userData, apiData }}
+      value={{ enterTrade, exitTrade, readUser, getAPI, userData, apiData,addToWatchList, removeFromWatchList }}
     >
       {children}
     </TradeContext.Provider>

@@ -98,7 +98,7 @@ const TradeCard = ({ trade }) => {
     };
 
     return (
-        <Card className="w-100 shadow-lg mb-4" onClick={handleClick}>
+        <Card className="w-100 shadow-lg mb-4 card-hover" onClick={handleClick}>
             <Card.Body>
                 {/* Header Section */}
                 <div className="d-flex justify-content-between align-items-center mb-4" >

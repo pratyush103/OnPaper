@@ -28,7 +28,13 @@ const Toastcontainer = forwardRef((props, ref) => {
       aria-live="polite"
       aria-atomic="true"
       className="position-fixed"
-      style={{ minWidth: "500px", minHeight: "240px", zIndex: 1, top: "12%", right: "1%" }}
+      style={{ 
+        minWidth: "500px", 
+        minHeight: "240px", 
+        zIndex: toasts.length > 0 ? 1 : -1, 
+        top: "12%", 
+        right: "1%" 
+      }}
     >
       <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1050 }}>
         {toasts.map((toast) => (

@@ -87,6 +87,11 @@ h1 {
   text-align: center;
 }
 
+.card-hover:hover{
+  background-color: #f0f0f020;
+  transition: background-color 0.3s ease;
+}
+
 /* input,
 button {
   border-radius: 8px;

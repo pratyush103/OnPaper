@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { WebSocketContext } from "./WebSocketManager";
-import { Card, Badge, Button, Collapse } from "react-bootstrap";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { Card, Badge, Button, Collapse, Spinner } from "react-bootstrap";
+import { TrendingUp, TrendingDown, Eye, EyeOff } from "lucide-react";
 import { useTrade } from "../trade/TradeProvider";
 import { ValidateResponse } from "../auth/ReqResHandler";
 import { useToast } from "../app-status/ToastContext";
@@ -49,20 +49,51 @@ const ActiveTradeWindow = ({ trade }) => {
 
   const calculatePnL = () => {
     if (!IsActive || !currentPrice) return null;
-
-
     return currentPrice * Quantity - EntryPrice;
   };
 
   const pnl = calculatePnL();
 
-  const { exitTrade, readUser } = useTrade();
+  const { exitTrade, readUser, addToWatchList, removeFromWatchList, userData } = useTrade();
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Check if stock is in watchlist using both StockCode and sanitized StockToken
+  useEffect(() => {
+    if (userData?.watchlist) {
+      const isCodeInWatchlist = StockCode in userData.watchlist;
+      const sanitizedToken = StockToken.replace(/[.!#/]/g, "_");
+      const isTokenInWatchlist = sanitizedToken in userData.watchlist;
+      setIsInWatchlist(isCodeInWatchlist || isTokenInWatchlist);
+    }
+  }, [userData, StockCode, StockToken]);
+
+  const handleWatchlistToggle = async () => {
+    setIsLoading(true);
+    try {
+      if (isInWatchlist) {
+        // Try removing using both StockCode and StockToken
+        await removeFromWatchList(StockToken);
+        // if (StockCode in (userData?.watchlist || {})) {
+        //   await removeFromWatchList(StockCode);
+        // }
+      } else {
+        await addToWatchList(StockCode, StockName, StockToken, ExchangeCode);
+      }
+      await readUser(); // Refresh user data
+    } catch (error) {
+      console.error('Failed to update watchlist:', error);
+      addToast("error", {
+        Header: "Watchlist Update Failed",
+        Message: "Failed to update watchlist. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSellStock = async () => {
     const currentTime = new Date();
-    const currentHours = currentTime.getHours();
-    const currentMinutes = currentTime.getMinutes();
-
     // Convert current time to IST
     const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
     const istTime = new Date(currentTime.getTime() + istOffset);
@@ -83,7 +114,7 @@ const ActiveTradeWindow = ({ trade }) => {
     }
 
     try {
-      let response = await exitTrade(trade.TradeId, currentPrice * Quantity);
+      let response = await exitTrade(TradeId, currentPrice * Quantity);
       ValidateResponse(response, addToast);
       addToast("success", {
         Header: "Trade Exited",
@@ -109,6 +140,21 @@ const ActiveTradeWindow = ({ trade }) => {
             <Badge bg={ExchangeCode === "NSE" ? "primary" : "danger"}>
               {ExchangeCode}
             </Badge>
+            <Button 
+              variant={isInWatchlist ? "outline-secondary" : "outline-primary"}
+              onClick={handleWatchlistToggle} 
+              disabled={isLoading}
+              className="d-flex align-items-center gap-1"
+            >
+              {isLoading ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                <>
+                  {isInWatchlist ? <EyeOff size={16} /> : <Eye size={16} />}
+                  <span>{isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}</span>
+                </>
+              )}
+            </Button>
           </div>
           <span className="text-muted">{StockName}</span>
         </div>
@@ -154,18 +200,20 @@ const ActiveTradeWindow = ({ trade }) => {
           </div>
         )}
 
-        <Button variant="danger" onClick={handleSellStock}>
-          Sell Stock
-        </Button>
+        <div className="mt-3">
+          <Button variant="danger" onClick={handleSellStock} className="me-2">
+            Sell Stock
+          </Button>
 
-        <Button
-          variant="link"
-          onClick={() => setIsExpanded(!isExpanded)}
-          aria-controls="collapse-details"
-          aria-expanded={isExpanded}
-        >
-          {isExpanded ? "Hide Details" : "Show Details"}
-        </Button>
+          <Button
+            variant="link"
+            onClick={() => setIsExpanded(!isExpanded)}
+            aria-controls="collapse-details"
+            aria-expanded={isExpanded}
+          >
+            {isExpanded ? "Hide Details" : "Show Details"}
+          </Button>
+        </div>
 
         <Collapse in={isExpanded}>
           <div id="collapse-details" className="mt-3">

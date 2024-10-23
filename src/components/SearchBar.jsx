@@ -211,9 +211,9 @@ const StockSearch = () => {
       >
         <Configure hitsPerPage={10} />
         <SearchBox
-          component={CustomSearchBox}
           onFocus={() => setIsOpen(true)}
-        />
+          />
+          {/* component={}CustomSearchBox */}
         
         {isOpen && (
           <div className={"position-absolute w-100 mt-1 rounded shadow border "+ (theme === 'dark' ? 'border-dark bg-dark text-light' : 'border-light bg-light')}
