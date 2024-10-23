@@ -11,7 +11,7 @@ const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     apiKey: "PX3rVhVppZRL4RPUQ9AMD9ulGy19oq9lNn8NTcUK9GUzXyT1",
     nodes: [
       {
-        host: "192.168.248.212",
+        host: "148.100.79.158",
         port: "8108",
         protocol: "http"
       },
@@ -207,7 +207,7 @@ const StockSearch = () => {
       
       <InstantSearch
         searchClient={searchClient}
-        indexName="intstruments"
+        indexName="instruments"
       >
         <Configure hitsPerPage={10} />
         <SearchBox
