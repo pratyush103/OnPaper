@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { Dropdown, Image } from 'react-bootstrap';
 import { CircleUser, Settings, ArrowRight } from 'lucide-react';
+import { useAuth } from '../auth/AuthContext';
 
 export const UserBadge = ({ profilePicture, fullName, onLogout }) => {
+  const {userInfo, logout } = useAuth();
   const [imgError, setImgError] = useState(false);
 
   // Get initials for avatar fallback
   const getInitials = (name) => {
-    if (!name) return ''; // Add this check
+    try
+    {
+      if(!name){
+      return userInfo?.localId[0]
+    }
     return name
       .split(' ')
       .map(part => part[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
+    }
+    catch(e){
+      return "PH"
+    }
   };
 
   // Custom toggle component to avoid default button styling
@@ -33,7 +43,7 @@ export const UserBadge = ({ profilePicture, fullName, onLogout }) => {
 
   const handleLogout = () => {
     if (window.confirm("Do you want to Logout?")) {
-      onLogout?.();
+      logout();
     }
   };
 

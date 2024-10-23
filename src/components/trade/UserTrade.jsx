@@ -38,12 +38,14 @@
 
 // export default UserTrade;
 import React, { useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { WebSocketContext } from './WebSocketManager';
 import { Card, Badge } from 'react-bootstrap';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 const TradeCard = ({ trade }) => {
     const { stockData, joinSymbol, leaveSymbol } = useContext(WebSocketContext);
+    const navigate = useNavigate();
     const {
         StockToken,
         StockCode,
@@ -76,7 +78,7 @@ const TradeCard = ({ trade }) => {
     });
 
     const formatTime = (timestamp) => {
-        return new Date(parseInt(timestamp)).toLocaleString('en-IN', {
+        return new Date(parseInt(timestamp)*1000).toLocaleString('en-IN', {
             day: '2-digit',
             month: 'short',
             hour: '2-digit',
@@ -86,16 +88,20 @@ const TradeCard = ({ trade }) => {
 
     const calculatePnL = () => {
         if (!IsActive || !currentPrice) return null;
-        return (currentPrice - EntryPrice) * Quantity;
+        return currentPrice * Quantity - EntryPrice;
     };
 
     const pnl = calculatePnL();
 
+    const handleClick = () => {
+        navigate('/trade/TradePage', { state: { trade } });
+    };
+
     return (
-        <Card className="w-100 shadow-lg mb-4">
+        <Card className="w-100 shadow-lg mb-4" onClick={handleClick}>
             <Card.Body>
                 {/* Header Section */}
-                <div className="d-flex justify-content-between align-items-center mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-4" >
                     <div className="d-flex align-items-center gap-2">
                         <h3 className="h5 mb-0">{StockCode}</h3>
                         <Badge 

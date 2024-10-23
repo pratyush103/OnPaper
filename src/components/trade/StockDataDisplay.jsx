@@ -13,7 +13,7 @@ const StockDataDisplay = () => {
         const newSocket = io("https://livestream.icicidirect.com", {
             auth: {
                 user: 'AH613873',
-                token: '69113632'
+                token: '84892932'
             },
             extraHeaders: {
                 "User-Agent": "node-socketio[client]/socket"

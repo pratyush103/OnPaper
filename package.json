@@ -10,6 +10,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@babel/runtime": "^7.25.9",
     "@popperjs/core": "^2.11.8",
     "@tauri-apps/api": ">=2.0.0-rc.0",
     "@tauri-apps/plugin-shell": ">=2.0.0-rc.0",
@@ -24,9 +25,11 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.2.0",
+    "react-instantsearch": "^7.13.5",
     "react-router-dom": "^6.26.2",
     "socket.io-client": "^4.8.0",
-    "sweetalert2": "^11.14.2"
+    "sweetalert2": "^11.14.2",
+    "typesense-instantsearch-adapter": "^2.8.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": ">=2.0.0-rc.0",

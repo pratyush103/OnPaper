@@ -10,12 +10,9 @@ const API_BASE_URL =
 export const TradeContext = createContext();
 
 export const TradeProvider = ({ children }) => {
-  const [userData, setUserData] = useState(
-    JSON.parse(sessionStorage.getItem("userData"))
-  );
-  const [apiData, setApiData] = useState(
-    JSON.parse(sessionStorage.getItem("apiData"))
-  );
+  const [userData, setUserData] = useState(sessionStorage.getItem("userData"));
+
+  const [apiData, setApiData] = useState(sessionStorage.getItem("apiData"));
   const { addToast } = useToast();
   const { authToken, updateToken, userInfo } = useAuth();
 
@@ -24,24 +21,24 @@ export const TradeProvider = ({ children }) => {
       getAPI();
     }
 
-
-  }, [apiData]);
-
-  useEffect(() => {
-    if (authToken && userInfo?.localId) {
-      readUser(authToken, userInfo.localId);
-    }
-  }, [authToken, userInfo]);
-
-  const enterTrade = async (tradeData) => {
+    return () => {
+      setApiData(null);
+    };
+  }, []);
+    useEffect(() => {
+        if (authToken) {
+            readUser();
+        }
+    }, [authToken]);
+  const enterTrade = async (stockCode, stockName, stockToken, exchangeCode, entryPrice, quantity) => {
     try {
       const verifiedToken = await VerifyToken(authToken, updateToken);
       const response = await axios.post(
         `${API_BASE_URL}/EnterTrade`,
-        { ...tradeData, verifiedToken },
+        JSON.stringify({ authToken: verifiedToken, userID: userInfo.localId, stockCode: stockCode, stockName: stockName, stockToken: stockToken, exchangeCode: exchangeCode, entryTime: Math.floor(Date.now() / 1000), entryPrice: entryPrice, quantity: quantity }),
         {
           headers: {
-            "Content-Type": "application/json",
+        "Content-Type": "application/json",
           },
         }
       );
@@ -60,12 +57,12 @@ export const TradeProvider = ({ children }) => {
     }
   };
 
-  const exitTrade = async (tradeData) => {
+  const exitTrade = async (tradeID, exitPrice) => {
     try {
       const verifiedToken = await VerifyToken(authToken, updateToken);
       const response = await axios.post(
         `${API_BASE_URL}/ExitTrade`,
-        { ...tradeData, verifiedToken },
+        JSON.stringify({authToken: verifiedToken, userID: userInfo.localId , tradeID: tradeID, exitPrice: exitPrice, exitTime: Math.floor(Date.now() / 1000)}),
         {
           headers: {
             "Content-Type": "application/json",
@@ -80,7 +77,7 @@ export const TradeProvider = ({ children }) => {
     }
   };
 
-  const readUser = async (authToken, userID) => {
+  const readUser = async () => {
     try {
       if (!userID) {
         throw new Error("UserID is missing or invalid");
@@ -90,7 +87,7 @@ export const TradeProvider = ({ children }) => {
       const response = await axios.get(`${API_BASE_URL}/ReadUser`, {
         params: {
           AuthToken: verifiedToken,
-          UserID: userID,
+          UserID: userInfo.localId,
         },
       });
       const data = await ValidateResponse(response, addToast);

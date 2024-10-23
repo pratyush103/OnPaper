@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const TradingViewAdvancedChart = ({ symbol = "BSE:WIPRO", width = "1500", height = "610" }) => {
+const TradingViewAdvancedChart = ({ symbol = "SENSEX", width = window.innerWidth, height = "695" }) => {
   const containerRef = useRef(null);
   const [theme, setTheme] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
