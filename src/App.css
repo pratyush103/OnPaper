@@ -24,6 +24,20 @@
   -webkit-text-size-adjust: 100%;
 }
 
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(97, 97, 97); /* Purple color */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
 /* .container {
   margin: 0;
   padding-top: 10vh;

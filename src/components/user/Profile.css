@@ -4,11 +4,12 @@
   align-items: center;
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
   border-radius: 8px;
+  border: grey 1px solid;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   margin: auto;
+  margin-top: 5%;
 }
 
 .profile-header {

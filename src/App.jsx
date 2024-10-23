@@ -38,6 +38,7 @@ function App() {
 
   return (
     <ToastProvider>
+      <script src="https://cdn.jsdelivr.net/npm/typesense-instantsearch-adapter@2/dist/typesense-instantsearch-adapter.min.js"></script>
         <AuthProvider>
           <TradeProvider>
             <WebSocketManager>

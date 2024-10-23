@@ -1,7 +1,7 @@
 // Register.jsx
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RegisterHandler } from './ReqResHandler'
 import { useToast } from '../app-status/ToastContext';
 
@@ -12,9 +12,17 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const { login } = useContext(AuthContext);
+  const { login, authToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authToken) {
+      navigate("/dashboard");
+    }
+  }, [authToken, navigate]);
   
 
   const RegisterServiceURL = "https://onpaper-auth.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io";

@@ -1,6 +1,6 @@
 // Login.jsx
-import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; // Assuming you have an AuthContext
 import { LoginHandler } from "./ReqResHandler"; // Assuming you have a LoginHandler function
 import { useToast } from "../app-status/ToastContext";
@@ -10,8 +10,18 @@ const Login = () => {
   const [error, setError] = useState({});
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login } = useAuth();
+  const { login, authToken } = useAuth();
   const { addToast } = useToast(); // Assuming you have a useToast hook
+
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authToken) {
+      navigate("/dashboard");
+    }
+  }, [authToken, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
