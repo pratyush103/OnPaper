@@ -1,4 +1,4 @@
-### Detailed README for OnPaper
+# OnPaper
 
 #### Introduction
 OnPaper is a Tauri-based cross-platform paper trading application. The frontend is built using Tauri and integrates various backend technologies to provide a seamless trading experience. Users can simulate trading activities and manage their portfolios using real-time market data and advanced search capabilities.
