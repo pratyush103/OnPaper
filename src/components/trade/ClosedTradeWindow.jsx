@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Button, Card, Badge, Spinner } from "react-bootstrap";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Eye, EyeOff } from "lucide-react";
 import { useTrade } from "./TradeProvider";
 
 

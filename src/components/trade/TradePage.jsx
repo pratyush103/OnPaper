@@ -44,7 +44,12 @@ const TradePage = () => {
                                 <ActiveTradeWindow trade={trade} />
                             </>
                         ) : (
-                            <ClosedTradeWindow trade={trade} />
+                            <>
+                                <div className="alert alert-warning" role="alert">
+                                    <h2>Trade Summary</h2> 
+                                </div>
+                                <ClosedTradeWindow trade={trade} />
+                            </>
                         )}
                     </div>
                 </div>

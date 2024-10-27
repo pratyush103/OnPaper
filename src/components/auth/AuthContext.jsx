@@ -41,6 +41,7 @@ const AuthProvider = ({ children }) => {
     setAuthToken(null);
     localStorage.removeItem("user");
     setUserInfo(null);
+    sessionStorage.clear();
   };
 
   return (

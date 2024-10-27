@@ -9,29 +9,29 @@ const UserWatchItem = ({ stock }) => {
   const [stockInfo, setStockInfo] = useState(null);
 
   const navigate = useNavigate();
-
+    const restoredToken = stock.StockToken.replace('_', '.').replace('_', '!')
   const trade = {
     SN: stock.StockName,
     NS: stock.StockCode,
     EC: stock.ExchangeCode,
-    Stock_Tocken: stock.StockToken,
+    Stock_Tocken: restoredToken,
   };
 
   useEffect(() => {
     if (stock && stock.StockToken) {
-      joinSymbol(stock.StockToken);
+      joinSymbol(restoredToken);
     }
 
     return () => {
       if (stock && stock.StockToken) {
-        leaveSymbol(stock.StockToken);
+        leaveSymbol(restoredToken);
       }
     };
   }, [stock, joinSymbol, leaveSymbol]);
 
   useEffect(() => {
-    if (stock && stock.StockToken && stockData[stock.StockToken]) {
-      setStockInfo(stockData[stock.StockToken]);
+    if (stock && stock.StockToken && stockData[restoredToken]) {
+      setStockInfo(stockData[restoredToken]);
     }
   }, [stock, stockData]);
 
@@ -39,7 +39,7 @@ const UserWatchItem = ({ stock }) => {
 
   const badgeColor = stock.ExchangeCode === "BSE" ? "danger" : "primary";
   const closeColor =
-    stockInfo && stockInfo.Close > stockInfo.Open ? "green" : "red";
+    stockInfo && stockInfo.Change > 0 ? "green" : "red";
 
   const formatPrice = (price) =>
     price?.toLocaleString("en-IN", {
@@ -63,14 +63,17 @@ const UserWatchItem = ({ stock }) => {
         </div>
         <div>
           {stockInfo && (
+            <>
             <h5
               className={
                 closeColor === "green" ? "text-success" : "text-danger"
               }
             >
               {closeColor === "green" ? <TrendingUp /> : <TrendingDown />}
-              {formatPrice(stockInfo.Close)}
+              {formatPrice(stockInfo.Last)}
             </h5>
+            <small className="text-muted ">LTQ: {stockInfo.TTQ}</small>
+            </>
           )}
         </div>
       </Card.Header>
