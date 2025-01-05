@@ -32,6 +32,7 @@ const NavbarComponent = () => {
             <Nav className="ms-auto">
               {userInfo ? (
                 <UserBadge
+                
                   profilePicture={userInfo.profilePicture}
                   fullName={userInfo.displayName}
                 />
