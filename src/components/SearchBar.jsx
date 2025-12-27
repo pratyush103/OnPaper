@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Form, Badge, Spinner } from 'react-bootstrap';
-import { Search } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Form, Badge, Spinner } from "react-bootstrap";
+import { Search } from "lucide-react";
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
-import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch';
+import { InstantSearch, SearchBox, Hits, Configure } from "react-instantsearch";
 
 // Initialize Typesense client
 const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
@@ -11,16 +11,16 @@ const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     apiKey: "PX3rVhVppZRL4RPUQ9AMD9ulGy19oq9lNn8NTcUK9GUzXyT1",
     nodes: [
       {
-        host: "192.168.248.212",
+        host: "148.100.79.158",
         port: "8108",
-        protocol: "http"
+        protocol: "http",
       },
     ],
   },
   additionalSearchParameters: {
     query_by: "SN,NS",
-    filter_by: "EC:[NSE,BSE]"
-  }
+    filter_by: "EC:[NSE,BSE]",
+  },
 });
 // http://192.168.248.212/
 // 148.100.79.158
@@ -28,19 +28,17 @@ const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
 const searchClient = typesenseInstantsearchAdapter.searchClient;
 
 const Hit = ({ hit, onSelect }) => (
-  <div 
+  <div
     className="list-group-item list-group-item-action"
     onClick={() => onSelect(hit)}
-    style={{ cursor: 'pointer' }}
+    style={{ cursor: "pointer" }}
   >
     <div className="d-flex justify-content-between align-items-center">
       <div>
         <div className="fw-medium">{hit.SN}</div>
         <div className="text-secondary small">
           <span className="me-2">{hit.NS}</span>
-          <Badge bg={hit.EC === 'NSE' ? 'primary' : 'danger'}>
-            {hit.EC}
-          </Badge>
+          <Badge bg={hit.EC === "NSE" ? "primary" : "danger"}>{hit.EC}</Badge>
         </div>
       </div>
     </div>
@@ -53,19 +51,19 @@ const CustomSearchBox = ({ currentRefinement, refine }) => (
       type="text"
       placeholder="Search stocks (e.g., WIPRO)"
       value={currentRefinement}
-      onChange={e => refine(e.target.value)}
+      onChange={(e) => refine(e.target.value)}
       className="form-control-lg"
-      style={{ paddingLeft: '40px' }}
+      style={{ paddingLeft: "40px" }}
     />
-    <Search 
-      className="position-absolute" 
-      style={{ 
-        left: '12px', 
-        top: '50%', 
-        transform: 'translateY(-50%)',
-        color: '#6c757d',
-        width: '20px',
-        height: '20px'
+    <Search
+      className="position-absolute"
+      style={{
+        left: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        color: "#6c757d",
+        width: "20px",
+        height: "20px",
       }}
     />
   </div>
@@ -76,16 +74,21 @@ const StockSearch = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const [theme, setTheme] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const [theme, setTheme] = useState(
+    window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light"
+  );
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e) => setTheme(e.matches ? 'dark' : 'light');
-    
-    mediaQuery.addEventListener('change', handleChange);
-    
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e) => setTheme(e.matches ? "dark" : "light");
+
+    mediaQuery.addEventListener("change", handleChange);
+
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.removeEventListener("change", handleChange);
     };
   }, [theme]);
 
@@ -96,8 +99,8 @@ const StockSearch = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSelect = (hit) => {
@@ -105,15 +108,19 @@ const StockSearch = () => {
       SN: hit.SN,
       NS: hit.NS,
       EC: hit.EC,
-      Stock_Tocken: hit.Stock_Tocken
+      Stock_Tocken: hit.Stock_Tocken,
     };
     console.log(trade);
-    navigate('/trade/tradepage', { state: { trade } });
+    navigate("/trade/tradepage", { state: { trade } });
     setIsOpen(false);
   };
 
   return (
-    <div className="position-relative" ref={dropdownRef} style={{ maxWidth: '500px' }}>
+    <div
+      className="position-relative"
+      ref={dropdownRef}
+      style={{ maxWidth: "500px" }}
+    >
       <style>{`
       .ais-SearchBox {
         width: 100%;
@@ -204,24 +211,26 @@ const StockSearch = () => {
         }
       }
       `}</style>
-      
-      <InstantSearch
-        searchClient={searchClient}
-        indexName="intstruments"
-      >
+
+      <InstantSearch searchClient={searchClient} indexName="instruments">
         <Configure hitsPerPage={10} />
-        <SearchBox
-          onFocus={() => setIsOpen(true)}
-          />
-          {/* component={}CustomSearchBox */}
-        
+        <SearchBox onFocus={() => setIsOpen(true)} />
+        {/* component={}CustomSearchBox */}
+
         {isOpen && (
-          <div className={"position-absolute w-100 mt-1 rounded shadow border "+ (theme === 'dark' ? 'border-dark bg-dark text-light' : 'border-light bg-light')}
-               style={{ 
-                 maxHeight: '400px', 
-                 overflowY: 'auto', 
-                 zIndex: 1000 
-               }}>
+          <div
+            className={
+              "position-absolute w-100 mt-1 rounded shadow border " +
+              (theme === "dark"
+                ? "border-dark bg-dark text-light"
+                : "border-light bg-light")
+            }
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+              zIndex: 1000,
+            }}
+          >
             <Hits
               hitComponent={({ hit }) => (
                 <Hit hit={hit} onSelect={handleSelect} />

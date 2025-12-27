@@ -1,0 +1,130 @@
+From 876e74bfbc1cec95735a6bbfe000a4a6188f4e39 Mon Sep 17 00:00:00 2001
+From: Pratyush Landekar <pratyushlandekar103@gmail.com>
+Date: Mon, 28 Oct 2024 00:29:57 +0530
+Subject: [PATCH 3/3] refactor: Clear session storage on logout
+
+---
+ src/components/ToggleTheme.jsx             |  0
+ src/components/auth/AuthContext.jsx        |  1 +
+ src/components/trade/ClosedTradeWindow.jsx |  2 +-
+ src/components/trade/TradePage.jsx         |  7 ++++++-
+ src/components/trade/UserWatchItem.jsx     | 19 +++++++++++--------
+ 5 files changed, 19 insertions(+), 10 deletions(-)
+ create mode 100644 src/components/ToggleTheme.jsx
+
+diff --git a/src/components/ToggleTheme.jsx b/src/components/ToggleTheme.jsx
+new file mode 100644
+index 0000000..e69de29
+diff --git a/src/components/auth/AuthContext.jsx b/src/components/auth/AuthContext.jsx
+index 41869ea..3c7e487 100644
+--- a/src/components/auth/AuthContext.jsx
++++ b/src/components/auth/AuthContext.jsx
+@@ -41,6 +41,7 @@ const AuthProvider = ({ children }) => {
+     setAuthToken(null);
+     localStorage.removeItem("user");
+     setUserInfo(null);
++    sessionStorage.clear();
+   };
+ 
+   return (
+diff --git a/src/components/trade/ClosedTradeWindow.jsx b/src/components/trade/ClosedTradeWindow.jsx
+index 23b9ff1..ba10c71 100644
+--- a/src/components/trade/ClosedTradeWindow.jsx
++++ b/src/components/trade/ClosedTradeWindow.jsx
+@@ -1,6 +1,6 @@
+ import React, {useState, useEffect} from "react";
+ import { Button, Card, Badge, Spinner } from "react-bootstrap";
+-import { TrendingUp, TrendingDown } from "lucide-react";
++import { TrendingUp, TrendingDown, Eye, EyeOff } from "lucide-react";
+ import { useTrade } from "./TradeProvider";
+ 
+ 
+diff --git a/src/components/trade/TradePage.jsx b/src/components/trade/TradePage.jsx
+index e53ac4e..40d928f 100644
+--- a/src/components/trade/TradePage.jsx
++++ b/src/components/trade/TradePage.jsx
+@@ -44,7 +44,12 @@ const TradePage = () => {
+                                 <ActiveTradeWindow trade={trade} />
+                             </>
+                         ) : (
+-                            <ClosedTradeWindow trade={trade} />
++                            <>
++                                <div className="alert alert-warning" role="alert">
++                                    <h2>Trade Summary</h2> 
++                                </div>
++                                <ClosedTradeWindow trade={trade} />
++                            </>
+                         )}
+                     </div>
+                 </div>
+diff --git a/src/components/trade/UserWatchItem.jsx b/src/components/trade/UserWatchItem.jsx
+index 7847316..4a5e6bd 100644
+--- a/src/components/trade/UserWatchItem.jsx
++++ b/src/components/trade/UserWatchItem.jsx
+@@ -9,29 +9,29 @@ const UserWatchItem = ({ stock }) => {
+   const [stockInfo, setStockInfo] = useState(null);
+ 
+   const navigate = useNavigate();
+-
++    const restoredToken = stock.StockToken.replace('_', '.').replace('_', '!')
+   const trade = {
+     SN: stock.StockName,
+     NS: stock.StockCode,
+     EC: stock.ExchangeCode,
+-    Stock_Tocken: stock.StockToken,
++    Stock_Tocken: restoredToken,
+   };
+ 
+   useEffect(() => {
+     if (stock && stock.StockToken) {
+-      joinSymbol(stock.StockToken);
++      joinSymbol(restoredToken);
+     }
+ 
+     return () => {
+       if (stock && stock.StockToken) {
+-        leaveSymbol(stock.StockToken);
++        leaveSymbol(restoredToken);
+       }
+     };
+   }, [stock, joinSymbol, leaveSymbol]);
+ 
+   useEffect(() => {
+-    if (stock && stock.StockToken && stockData[stock.StockToken]) {
+-      setStockInfo(stockData[stock.StockToken]);
++    if (stock && stock.StockToken && stockData[restoredToken]) {
++      setStockInfo(stockData[restoredToken]);
+     }
+   }, [stock, stockData]);
+ 
+@@ -39,7 +39,7 @@ const UserWatchItem = ({ stock }) => {
+ 
+   const badgeColor = stock.ExchangeCode === "BSE" ? "danger" : "primary";
+   const closeColor =
+-    stockInfo && stockInfo.Close > stockInfo.Open ? "green" : "red";
++    stockInfo && stockInfo.Change > 0 ? "green" : "red";
+ 
+   const formatPrice = (price) =>
+     price?.toLocaleString("en-IN", {
+@@ -63,14 +63,17 @@ const UserWatchItem = ({ stock }) => {
+         </div>
+         <div>
+           {stockInfo && (
++            <>
+             <h5
+               className={
+                 closeColor === "green" ? "text-success" : "text-danger"
+               }
+             >
+               {closeColor === "green" ? <TrendingUp /> : <TrendingDown />}
+-              {formatPrice(stockInfo.Close)}
++              {formatPrice(stockInfo.Last)}
+             </h5>
++            <small className="text-muted ">LTQ: {stockInfo.TTQ}</small>
++            </>
+           )}
+         </div>
+       </Card.Header>
+-- 
+2.47.0.windows.1
+

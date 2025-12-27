@@ -5,7 +5,7 @@ import { useToast } from "../app-status/ToastContext";
 import { useAuth } from "../auth/AuthContext";
 
 const API_BASE_URL =
-  "https://onpaper-trade.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io/trade";
+  "http://localhost:8000/trade"  //"https://onpaper-trade.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io/trade";
 
 export const TradeContext = createContext();
 

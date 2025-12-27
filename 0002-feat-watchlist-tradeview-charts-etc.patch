@@ -1,0 +1,1081 @@
+From 0e24aaec85ca4a23815a4e5b0522843b2f363c0e Mon Sep 17 00:00:00 2001
+From: Pratyush Landekar <pratyushlandekar103@gmail.com>
+Date: Thu, 24 Oct 2024 04:48:30 +0530
+Subject: [PATCH 2/3] feat: watchlist, tradeview charts,etc
+
+---
+ src-tauri/icons/32x32.png                    | Bin 974 -> 1168 bytes
+ src/App.css                                  |   5 +
+ src/components/Home.css                      |  31 ++
+ src/components/Home.jsx                      | 331 ++++++++++++++-----
+ src/components/SearchBar.jsx                 |   4 +-
+ src/components/app-status/Toastcontainer.jsx |   8 +-
+ src/components/trade/ActiveTradeWindow.jsx   |  90 +++--
+ src/components/trade/ClosedTradeWindow.jsx   |  59 +++-
+ src/components/trade/TradePage.jsx           |  17 +-
+ src/components/trade/TradePageCharts.jsx     |  67 ++++
+ src/components/trade/TradeProvider.jsx       |  63 +++-
+ src/components/trade/UserTrade.jsx           |   2 +-
+ src/components/trade/UserWatchItem.jsx       |  81 +++++
+ src/components/trade/UserWatchList.jsx       |  24 +-
+ 14 files changed, 663 insertions(+), 119 deletions(-)
+ create mode 100644 src/components/Home.css
+ create mode 100644 src/components/trade/TradePageCharts.jsx
+ create mode 100644 src/components/trade/UserWatchItem.jsx
+
+diff --git a/src-tauri/icons/32x32.png b/src-tauri/icons/32x32.png
+index a437dd51741e9e56e14b5d6024493cb2abfd5259..a879116e450024613167ebb84b1bb6db3f164f4f 100644
+GIT binary patch
+delta 1122
+zcmV-o1fBcN2apMnB#}8Be*g(^NLh0L00&|K00&|LIC`1e000CfNkl<ZSV!$vNhtPR
+z6hG#<#Ku_0Y=niBNF*7PwL}ytqO2&%xUxW5uu)2qEX;&Vv7!vgLJ=|#ndjkr=N!-f
+z`SARo=Xu|^-tS$!->**hf6xEidw%zxbI-jd0DvTa45pg)kKum;e}5l=(9lrG%E|&q
+zM@Q-FJq50=u8^0P2QDry8jW$-+uH*o!s+QLw70jz>guZK*;#sex=2t^kmyoUQebv=
+zR-J&iw>L~oOu*345G*Y%!Rza*=8tihnVEr~pC4poWQZ&-F2c&niY!RM<Kv_FxVyVk
+z4?$5;5nNncz{bV~f7sdCfvv5rOso(0_xEByKR*v09UV|vSt)bW)zyi!fq?;y<p;RW
+z&KasZFgiL4S65fCx3{O!eBkZvO*`;AEG#S_GBOgjwzeQYKOam@O=Wy=a4_`t_Ci2F
+zfb=~)JRmJC4JIciWt=L3v9U4e>+6Gsg#~f?^z@`R3^zA7e{gwuDc|h0p`k%S$E!R#
+zI+A?g?JqAc7aPt4Ci?#VE`7Z_z=LjYZ)NMPt*yb_++6eb0~{7!wUw0>Y;SKvRaF&C
+zPftTsR20O-#6U|+3oI`$3;CR!9Gx(H1{3%q!^6Xvn3$-eR}&(Jl+k#2c!-{!o){Y&
+zi<I3sH8q9%fBXALWK_o~qMC%fJ-jkQ2n-B_&dyE=&EVjmBw%!OG`PFFLr6#n5E+P%
+zj|U>68KECKtSJ6Slc9-;3DS|$`Omt|%}u04MPFZE(Up~zA%zZic6M-meO+vvoSbyV
+zs)(*KE-p@-H#axSR(}3Rxq)kIYj}Qsj@Q@MSW{CYf3{6cP12v4nL#%<H>4avssUfd
+z>Je2X(pi=XS$uqaMCah(fOB(mNSTdENl7?9K8{o?kgA^8@y^-U*r27QrR)Ib!1sAo
+zL|0i@SSS<n3b-vPDM88!92psrl_w-5h+Sr8rj}%DYpXa83k$=>#zyq__s4^S1D&~5
+z<f|eze>D~9TqD&2q$()!qy)q6?rw=Wonx&nZ!^cdw6s*hKs6t!0%BWRn-HKn@MUg2
+z@^2?1A_7lNPGm)#2dt~Dt<|owxVTtrs|Zy#X{)QNv7({^3knLf1dfl7b?m>3_83x}
+zp{uJ4Xb_y8ooQ=-e}BKUT;V9u<oh#}a?Qt*f5DYg0ar$2&|2`hrKEx6<YXbBR6Z`p
+zl<9K87{bfTi?qK?fQ}D@hlj)N?k+q(KWho_{a#;RFRdXcj+HxuazexyzED)0@M;WQ
+zziLn%|MCue#>2ydyl#F5isR1&_$^=zss#8ULYIoB_hb0J1N<sdo@9ogdL8qL;P+Zj
+zSWl0TVeqwTXhl?%<Xu3;N3LUMXJ^RG&6TU&5L5{;=#qi#>}>Gz^7`p~pqe2M8oJgs
+o8vW2q;J<?LH2ux^+X(>t1E1^7huvN)hyVZp07*qoM6N<$g1nd<82|tP
+
+delta 924
+zcmV;N17rM<3C;(QBoYa5NLh0L01FcU01FcV0GgZ_ks%*{17k@<K~#7F?N&i<+E5Uk
+zF;Ue;tB@NQ1=4gC$f8M9DUcI1JweC`>Ye~|0>}wMPLT8jm@Y!H33Sz}5aFI6M9Lzq
+zz|;A*0sGs=2A1uU!1nk2dGF7knQwr99SAFen)x(eCO;F8y2C~0FD1YxRTPcyPWVxk
+zUYmeuz}TvPvKTYY*TMqm>uwo{YT&Fm&V3b&clullScJT_tMh-wKS(D38?GRgSD*JY
+zU>y(dKEtX4IP7Im@Z3Xe@UxDGot9+BBA~*=We-hcBoYa*ohsOb>3)-r#cnlbj>dCp
+z(*cW)I42C*PJtvyDI)A?UUh?Am*dC<n5@pW^_dTUtc2P@0*DCA%V@V0K`ue3T5tf9
+zgtcfxwn-ELLB4t0Ki<6Qp9jcAVk-C`eq13nX&#e_sJTc%QJx<wAlvShayR_}5?vyY
+z>LYLFOTMZg(x{a`@j0;I+w6UyXUrGC<T`IslU!l~G$j)?WSTr?dhXMS1!S*#nq5va
+z7|PgxI+M(<0uvFs62p$?X_!dBc6%Ti%8VST-rvt1_1<s!oZEYB(MJw_*J((k;bHfS
+zUyw3uOo&|w=nVny`8kKZEbjT*xZmG8g(cwjkAeF*#A0Vdwh2T)?F`Zra%LZnX&hVg
+zk#PEltA?(^Ox6Me&!hY#E`)St?!Ps???rBZphBMrVaP(O_j_+b9dmisnY8Ran!K25
+zA^{weA{)CvpL5X*#7Rg(A&LFNOSRM4Fbjoga@nP6w_x%dO5D058rj@3M8%)A+y{1K
+zo7A7zAN&J$@_NZNZrv9Ufw=;RQ1uD0=$CARXdlO6;13fhG5HzHK|p|)1i|v1?Y)D4
+ztp*P|2Mi}D-|PK%xt655>kxM`@=+azKpBcESo=MCn2?NKK4rXn?AUbdjwX-$d~h=N
+z4{`>?AP@nwkP%J|S00ObRSDV@hGFEn_Rn(mrgypaJRaD|oB-iD;4c|1d;LR$7>IL&
+z(EegNCbWhlYjgn#5cxfjz3o+4h(6PQgpDz!s^&q)l!#02nNgbB^5@w7UUoGBu80~l
+z`&W;m?>na=mt~%Xsgg&%zn4qgJ!8L!<VZw<6P6U~G^#T$EkIzq{aqbn$_{g2#Uf!5
+yjM0myv#6?AS%4R!1d-O)#XaHU<1(cG;l*EM+I6PbFB;YW0000<MNUMnLSTZlS-8Uh
+
+diff --git a/src/App.css b/src/App.css
+index c692cca..73626a4 100644
+--- a/src/App.css
++++ b/src/App.css
+@@ -87,6 +87,11 @@ h1 {
+   text-align: center;
+ }
+ 
++.card-hover:hover{
++  background-color: #f0f0f020;
++  transition: background-color 0.3s ease;
++}
++
+ /* input,
+ button {
+   border-radius: 8px;
+diff --git a/src/components/Home.css b/src/components/Home.css
+new file mode 100644
+index 0000000..e7c0f5b
+--- /dev/null
++++ b/src/components/Home.css
+@@ -0,0 +1,31 @@
++:root {
++    --background-color: #f3f4f6;
++    --text-color: #1f2937;
++    --header-background-color: #1e3a8a;
++    --header-text-color: white;
++    --accent-color: #60a5fa;
++    --button-background-color: #60a5fa;
++    --button-hover-color: #1e3a8a;
++    --button-text-color: white;
++    --section-background-color: #ffffff;
++    --card-background-color: #ffffff;
++    --footer-text-color: white;
++    --feature-card-text-color: #1f2937; /* Default feature card text color */
++  }
++  
++  @media (prefers-color-scheme: dark) {
++    :root {
++      --background-color: #1f2937;
++      --text-color: #ffffff;
++      --header-background-color: #60a5fa;
++      --header-text-color: #1f2937;
++      --accent-color: #1e3a8a;
++      --button-background-color: #1e3a8a;
++      --button-hover-color: #60a5fa;
++      --button-text-color: #f3f4f6;
++      --section-background-color: #2d3748;
++      --card-background-color: #2d3748;
++      --footer-text-color: #ffffff;
++      --feature-card-text-color: white; /* Feature card text will be white in dark mode */
++    }
++  }
+\ No newline at end of file
+diff --git a/src/components/Home.jsx b/src/components/Home.jsx
+index 3a4d034..6591b25 100644
+--- a/src/components/Home.jsx
++++ b/src/components/Home.jsx
+@@ -1,87 +1,262 @@
+ import React from "react";
+-import 'bootstrap/dist/css/bootstrap.min.css';
+-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+-// import './Homestyles.css'; // Assuming you have a CSS file for additional styles
++import { motion } from "framer-motion";
++import "./Home.css";
++
+ 
+ const Home = () => {
+-    return (
+-        <div id="page-top">
+-            {/* Navigation */}
+-            {/* <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+-                <div className="container px-4">
+-                    <a className="navbar-brand" href="#page-top">Start Bootstrap</a>
+-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+-                        <span className="navbar-toggler-icon"></span>
+-                    </button>
+-                    <div className="collapse navbar-collapse" id="navbarResponsive">
+-                        <ul className="navbar-nav ms-auto">
+-                            <li className="nav-item"><a className="nav-link" href="#about">About</a></li>
+-                            <li className="nav-item"><a className="nav-link" href="#services">Services</a></li>
+-                            <li className="nav-item"><a className="nav-link" href="#contact">Contact</a></li>
+-                        </ul>
+-                    </div>
+-                </div>
+-            </nav> */}
++  return (
++    <div
++      style={{
++        fontFamily: "'Poppins', sans-serif", // Font family for modern look
++        lineHeight: 1.6,
++        color: "var(--text-color)", // Dynamic color for text
++        backgroundColor: "var(--background-color)", // Dynamic background color
++      }}
++    >
++      <header
++        style={{
++          backgroundColor: "var(--header-background-color)", // Dynamic header background
++          color: "var(--header-text-color)", // Dynamic header text color
++          padding: "3rem 2rem",
++          textAlign: "center",
++          borderBottom: "5px solid var(--accent-color)", // Accent color for bottom border
++        }}
++      >
++        <h1
++          style={{
++            fontSize: "3rem",
++            marginBottom: "1.5rem",
++            fontWeight: "bold",
++          }}
++        >
++          Welcome to OnPaper
++        </h1>
++        <p
++          style={{
++            fontSize: "1.3rem",
++            marginBottom: "2rem",
++            color: "white", // White text for "Master the art of trading..."
++          }}
++        >
++          Master the art of trading without risking real money
++        </p>
++        <a
++          href="/register"
++          style={{
++            backgroundColor: "var(--button-background-color)", // Dynamic button color
++            color: "var(--button-text-color)", // Dynamic button text
++            padding: "0.8rem 1.5rem",
++            borderRadius: "30px",
++            textDecoration: "none",
++            fontWeight: "bold",
++            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.6)",
++            transition: "background-color 0.3s",
++          }}
++          onMouseEnter={(e) =>
++            (e.target.style.backgroundColor = "var(--button-hover-color)")
++          }
++          onMouseLeave={(e) =>
++            (e.target.style.backgroundColor = "var(--button-background-color)")
++          }
++        >
++          Start Trading Now
++        </a>
++      </header>
+ 
+-            {/* Header */}
+-            <header className="bg-primary bg-gradient text-white">
+-                <div className="container px-4 text-center">
+-                    <h1 className="fw-bolder">Welcome to Scrolling Nav</h1>
+-                    <p className="lead">A functional Bootstrap 5 boilerplate for one page scrolling websites</p>
+-                    <a className="btn btn-lg " href="#about">Start scrolling!</a>
+-                </div>
+-            </header>
++      <section id="features" style={{ padding: "4rem 2rem" }}>
++        <h2
++          style={{
++            textAlign: "center",
++            fontSize: "2.5rem",
++            marginBottom: "3rem",
++            color: "var(--header-background-color)", // Matching color scheme
++          }}
++        >
++          Why Choose OnPaper?
++        </h2>
++        <div
++          style={{
++            display: "flex",
++            justifyContent: "space-around",
++            flexWrap: "wrap",
++          }}
++        >
++          <FeatureCard
++            title="Real-Time Market Data"
++            description="Practice with up-to-the-minute market information"
++          />
++          <FeatureCard
++            title="Risk-Free Trading"
++            description="Learn and experiment without financial consequences"
++          />
++          <FeatureCard
++            title="Community Support"
++            description="Connect with fellow traders and share insights"
++          />
++        </div>
++      </section>
+ 
+-            {/* About section */}
+-            <section id="about">
+-                <div className="container px-4">
+-                    <div className="row gx-4 justify-content-center">
+-                        <div className="col-lg-8">
+-                            <h2>About this page</h2>
+-                            <p className="lead">This is a great place to talk about your webpage. This template is purposefully unstyled so you can use it as a boilerplate or starting point for you own landing page designs! This template features:</p>
+-                            <ul>
+-                                <li>Clickable nav links that smooth scroll to page sections</li>
+-                                <li>Responsive behavior when clicking nav links perfect for a one page website</li>
+-                                <li>Bootstrap's scrollspy feature which highlights which section of the page you're on in the navbar</li>
+-                                <li>Minimal custom CSS so you are free to explore your own unique design options</li>
+-                            </ul>
+-                        </div>
+-                    </div>
+-                </div>
+-            </section>
++      <section
++        id="services"
++        style={{
++          backgroundColor: "var(--section-background-color)",
++          padding: "4rem 2rem",
++        }}
++      >
++        <h2
++          style={{
++            textAlign: "center",
++            fontSize: "2.5rem",
++            marginBottom: "3rem",
++            color: "var(--header-background-color)",
++          }}
++        >
++          Our Services
++        </h2>
++        <div
++          style={{
++            display: "flex",
++            flexWrap: "wrap",
++            justifyContent: "space-around",
++          }}
++        >
++          <ServiceCard
++            title="Paper Trading"
++            description="Practice trading stocks, options, and cryptocurrencies with virtual money."
++          />
++          <ServiceCard
++            title="Market Analysis"
++            description="Access powerful tools for technical and fundamental analysis."
++          />
++          <ServiceCard
++            title="Trading Education"
++            description="Learn trading strategies and risk management techniques from experts."
++          />
++          <ServiceCard
++            title="Portfolio Management"
++            description="Track and optimize your virtual portfolio performance over time."
++          />
++        </div>
++      </section>
+ 
+-            {/* Services section */}
+-            <section className="" id="services">
+-                <div className="container px-4">
+-                    <div className="row gx-4 justify-content-center">
+-                        <div className="col-lg-8">
+-                            <h2>Services we offer</h2>
+-                            <p className="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut optio velit inventore, expedita quo laboriosam possimus ea consequatur vitae, doloribus consequuntur ex. Nemo assumenda laborum vel, labore ut velit dignissimos.</p>
+-                        </div>
+-                    </div>
+-                </div>
+-            </section>
++      <section
++        id="contact"
++        style={{ padding: "4rem 2rem", textAlign: "center" }}
++      >
++        <h2
++          style={{
++            fontSize: "2.5rem",
++            marginBottom: "2rem",
++            color: "var(--header-background-color)",
++          }}
++        >
++          Ready to Start?
++        </h2>
++        <p style={{ fontSize: "1.3rem", marginBottom: "2rem" }}>
++          Join thousands of traders who have sharpened their skills with
++          PaperTrade Pro
++        </p>
++        <a
++          href="/register"
++          style={{
++            backgroundColor: "var(--button-background-color)",
++            color: "var(--button-text-color)",
++            padding: "0.8rem 1.5rem",
++            borderRadius: "30px",
++            textDecoration: "none",
++            fontWeight: "bold",
++            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
++            transition: "background-color 0.3s",
++          }}
++          onMouseEnter={(e) =>
++            (e.target.style.backgroundColor = "var(--button-hover-color)")
++          }
++          onMouseLeave={(e) =>
++            (e.target.style.backgroundColor = "var(--button-background-color)")
++          }
++        >
++          Sign Up Now
++        </a>
++      </section>
+ 
+-            {/* Contact section */}
+-            <section id="contact">
+-                <div className="container px-4">
+-                    <div className="row gx-4 justify-content-center">
+-                        <div className="col-lg-8">
+-                            <h2>Contact us</h2>
+-                            <p className="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero odio fugiat voluptatem dolor, provident officiis, id iusto! Obcaecati incidunt, qui nihil beatae magnam et repudiandae ipsa exercitationem, in, quo totam.</p>
+-                        </div>
+-                    </div>
+-                </div>
+-            </section>
++      <footer
++        style={{
++          backgroundColor: "var(--header-background-color)",
++          color: "white",
++          padding: "1.5rem",
++          textAlign: "center",
++        }}
++      >
++        <p>&copy; 2024 PaperTrade Pro. All rights reserved.</p>
++      </footer>
++    </div>
++  );
++};
+ 
+-            {/* Footer */}
+-            <footer className="py-5 bg-dark">
+-                <div className="container px-4">
+-                    <p className="m-0 text-center text-white">Copyright &copy; Your Website 2023</p>
+-                </div>
+-            </footer>
+-        </div>
+-    );
+-}
++// Updated FeatureCard with improved styling
++const FeatureCard = ({ title, description }) => {
++  return (
++    <motion.div
++      initial={{ opacity: 0, y: 50 }}
++      whileInView={{ opacity: 1, y: 0 }}
++      transition={{ duration: 0.6 }}
++      viewport={{ once: false }}
++      style={{
++        backgroundColor: "var(--card-background-color)",
++        padding: "1.5rem",
++        borderRadius: "10px",
++        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)",
++        margin: "1.5rem",
++        maxWidth: "320px",
++        textAlign: "center",
++        color: "var(--feature-card-text-color)", // Feature card text color for both modes
++      }}
++    >
++      <h3
++        style={{
++          fontSize: "1.4rem",
++          marginBottom: "1rem",
++          color: "var(--header-background-color)",
++        }}
++      >
++        {title}
++      </h3>
++      <p>{description}</p>
++    </motion.div>
++  );
++};
++
++// Updated ServiceCard with improved styling
++const ServiceCard = ({ title, description }) => {
++  return (
++    <motion.div
++      initial={{ opacity: 0, y: 50 }}
++      whileInView={{ opacity: 1, y: 0 }}
++      transition={{ duration: 0.6 }}
++      viewport={{ once: false }}
++      style={{
++        backgroundColor: "var(--card-background-color)",
++        padding: "1.5rem",
++        borderRadius: "10px",
++        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)",
++        margin: "1.5rem",
++        maxWidth: "320px",
++        textAlign: "center",
++        color: "var(--text-color)", // Text color for service cards
++      }}
++    >
++      <h3
++        style={{
++          fontSize: "1.4rem",
++          marginBottom: "1rem",
++          color: "var(--header-background-color)",
++        }}
++      >
++        {title}
++      </h3>
++      <p>{description}</p>
++    </motion.div>
++  );
++};
+ 
+-export default Home;
+\ No newline at end of file
++export default Home;
+diff --git a/src/components/SearchBar.jsx b/src/components/SearchBar.jsx
+index 4d574d5..d14c424 100644
+--- a/src/components/SearchBar.jsx
++++ b/src/components/SearchBar.jsx
+@@ -211,9 +211,9 @@ const StockSearch = () => {
+       >
+         <Configure hitsPerPage={10} />
+         <SearchBox
+-          component={CustomSearchBox}
+           onFocus={() => setIsOpen(true)}
+-        />
++          />
++          {/* component={}CustomSearchBox */}
+         
+         {isOpen && (
+           <div className={"position-absolute w-100 mt-1 rounded shadow border "+ (theme === 'dark' ? 'border-dark bg-dark text-light' : 'border-light bg-light')}
+diff --git a/src/components/app-status/Toastcontainer.jsx b/src/components/app-status/Toastcontainer.jsx
+index d4861f0..583d092 100644
+--- a/src/components/app-status/Toastcontainer.jsx
++++ b/src/components/app-status/Toastcontainer.jsx
+@@ -28,7 +28,13 @@ const Toastcontainer = forwardRef((props, ref) => {
+       aria-live="polite"
+       aria-atomic="true"
+       className="position-fixed"
+-      style={{ minWidth: "500px", minHeight: "240px", zIndex: 1, top: "12%", right: "1%" }}
++      style={{ 
++        minWidth: "500px", 
++        minHeight: "240px", 
++        zIndex: toasts.length > 0 ? 1 : -1, 
++        top: "12%", 
++        right: "1%" 
++      }}
+     >
+       <ToastContainer position="top-end" className="p-3" style={{ zIndex: 1050 }}>
+         {toasts.map((toast) => (
+diff --git a/src/components/trade/ActiveTradeWindow.jsx b/src/components/trade/ActiveTradeWindow.jsx
+index 0df4dcc..ea27515 100644
+--- a/src/components/trade/ActiveTradeWindow.jsx
++++ b/src/components/trade/ActiveTradeWindow.jsx
+@@ -1,7 +1,7 @@
+ import React, { useContext, useEffect, useState } from "react";
+ import { WebSocketContext } from "./WebSocketManager";
+-import { Card, Badge, Button, Collapse } from "react-bootstrap";
+-import { TrendingUp, TrendingDown } from "lucide-react";
++import { Card, Badge, Button, Collapse, Spinner } from "react-bootstrap";
++import { TrendingUp, TrendingDown, Eye, EyeOff } from "lucide-react";
+ import { useTrade } from "../trade/TradeProvider";
+ import { ValidateResponse } from "../auth/ReqResHandler";
+ import { useToast } from "../app-status/ToastContext";
+@@ -49,20 +49,51 @@ const ActiveTradeWindow = ({ trade }) => {
+ 
+   const calculatePnL = () => {
+     if (!IsActive || !currentPrice) return null;
+-
+-
+     return currentPrice * Quantity - EntryPrice;
+   };
+ 
+   const pnl = calculatePnL();
+ 
+-  const { exitTrade, readUser } = useTrade();
++  const { exitTrade, readUser, addToWatchList, removeFromWatchList, userData } = useTrade();
++  const [isInWatchlist, setIsInWatchlist] = useState(false);
++  const [isLoading, setIsLoading] = useState(false);
++
++  // Check if stock is in watchlist using both StockCode and sanitized StockToken
++  useEffect(() => {
++    if (userData?.watchlist) {
++      const isCodeInWatchlist = StockCode in userData.watchlist;
++      const sanitizedToken = StockToken.replace(/[.!#/]/g, "_");
++      const isTokenInWatchlist = sanitizedToken in userData.watchlist;
++      setIsInWatchlist(isCodeInWatchlist || isTokenInWatchlist);
++    }
++  }, [userData, StockCode, StockToken]);
++
++  const handleWatchlistToggle = async () => {
++    setIsLoading(true);
++    try {
++      if (isInWatchlist) {
++        // Try removing using both StockCode and StockToken
++        await removeFromWatchList(StockToken);
++        // if (StockCode in (userData?.watchlist || {})) {
++        //   await removeFromWatchList(StockCode);
++        // }
++      } else {
++        await addToWatchList(StockCode, StockName, StockToken, ExchangeCode);
++      }
++      await readUser(); // Refresh user data
++    } catch (error) {
++      console.error('Failed to update watchlist:', error);
++      addToast("error", {
++        Header: "Watchlist Update Failed",
++        Message: "Failed to update watchlist. Please try again.",
++      });
++    } finally {
++      setIsLoading(false);
++    }
++  };
+ 
+   const handleSellStock = async () => {
+     const currentTime = new Date();
+-    const currentHours = currentTime.getHours();
+-    const currentMinutes = currentTime.getMinutes();
+-
+     // Convert current time to IST
+     const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+     const istTime = new Date(currentTime.getTime() + istOffset);
+@@ -83,7 +114,7 @@ const ActiveTradeWindow = ({ trade }) => {
+     }
+ 
+     try {
+-      let response = await exitTrade(trade.TradeId, currentPrice * Quantity);
++      let response = await exitTrade(TradeId, currentPrice * Quantity);
+       ValidateResponse(response, addToast);
+       addToast("success", {
+         Header: "Trade Exited",
+@@ -109,6 +140,21 @@ const ActiveTradeWindow = ({ trade }) => {
+             <Badge bg={ExchangeCode === "NSE" ? "primary" : "danger"}>
+               {ExchangeCode}
+             </Badge>
++            <Button 
++              variant={isInWatchlist ? "outline-secondary" : "outline-primary"}
++              onClick={handleWatchlistToggle} 
++              disabled={isLoading}
++              className="d-flex align-items-center gap-1"
++            >
++              {isLoading ? (
++                <Spinner animation="border" size="sm" />
++              ) : (
++                <>
++                  {isInWatchlist ? <EyeOff size={16} /> : <Eye size={16} />}
++                  <span>{isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}</span>
++                </>
++              )}
++            </Button>
+           </div>
+           <span className="text-muted">{StockName}</span>
+         </div>
+@@ -154,18 +200,20 @@ const ActiveTradeWindow = ({ trade }) => {
+           </div>
+         )}
+ 
+-        <Button variant="danger" onClick={handleSellStock}>
+-          Sell Stock
+-        </Button>
++        <div className="mt-3">
++          <Button variant="danger" onClick={handleSellStock} className="me-2">
++            Sell Stock
++          </Button>
+ 
+-        <Button
+-          variant="link"
+-          onClick={() => setIsExpanded(!isExpanded)}
+-          aria-controls="collapse-details"
+-          aria-expanded={isExpanded}
+-        >
+-          {isExpanded ? "Hide Details" : "Show Details"}
+-        </Button>
++          <Button
++            variant="link"
++            onClick={() => setIsExpanded(!isExpanded)}
++            aria-controls="collapse-details"
++            aria-expanded={isExpanded}
++          >
++            {isExpanded ? "Hide Details" : "Show Details"}
++          </Button>
++        </div>
+ 
+         <Collapse in={isExpanded}>
+           <div id="collapse-details" className="mt-3">
+@@ -279,4 +327,4 @@ const ActiveTradeWindow = ({ trade }) => {
+   );
+ };
+ 
+-export default ActiveTradeWindow;
++export default ActiveTradeWindow;
+\ No newline at end of file
+diff --git a/src/components/trade/ClosedTradeWindow.jsx b/src/components/trade/ClosedTradeWindow.jsx
+index 60a1743..23b9ff1 100644
+--- a/src/components/trade/ClosedTradeWindow.jsx
++++ b/src/components/trade/ClosedTradeWindow.jsx
+@@ -1,6 +1,8 @@
+-import React from "react";
+-import { Card, Badge } from "react-bootstrap";
++import React, {useState, useEffect} from "react";
++import { Button, Card, Badge, Spinner } from "react-bootstrap";
+ import { TrendingUp, TrendingDown } from "lucide-react";
++import { useTrade } from "./TradeProvider";
++
+ 
+ const ClosedTradeWindow = ({ trade }) => {
+   const {
+@@ -17,6 +19,44 @@ const ClosedTradeWindow = ({ trade }) => {
+     TakeProfit,
+   } = trade;
+ 
++  const { exitTrade, readUser, addToWatchList, removeFromWatchList, userData } = useTrade();
++  const [isInWatchlist, setIsInWatchlist] = useState(false);
++  const [isLoading, setIsLoading] = useState(false);
++
++  // Check if stock is in watchlist using both StockCode and sanitized StockToken
++  useEffect(() => {
++    if (userData?.watchlist) {
++      const isCodeInWatchlist = StockCode in userData.watchlist;
++      const sanitizedToken = StockToken.replace(/[.!#/]/g, "_");
++      const isTokenInWatchlist = sanitizedToken in userData.watchlist;
++      setIsInWatchlist(isCodeInWatchlist || isTokenInWatchlist);
++    }
++  }, [userData, StockCode, StockToken]);
++
++  const handleWatchlistToggle = async () => {
++    setIsLoading(true);
++    try {
++      if (isInWatchlist) {
++        // Try removing using both StockCode and StockToken
++        await removeFromWatchList(StockToken);
++        if (StockCode in (userData?.watchlist || {})) {
++          await removeFromWatchList(StockCode);
++        }
++      } else {
++        await addToWatchList(StockCode, StockName, StockToken, ExchangeCode);
++      }
++      await readUser(); // Refresh user data
++    } catch (error) {
++      console.error('Failed to update watchlist:', error);
++      addToast("error", {
++        Header: "Watchlist Update Failed",
++        Message: "Failed to update watchlist. Please try again.",
++      });
++    } finally {
++      setIsLoading(false);
++    }
++  };
++
+   const formatPrice = (price) =>
+     price?.toLocaleString("en-IN", {
+       style: "currency",
+@@ -52,6 +92,21 @@ const ClosedTradeWindow = ({ trade }) => {
+             <Badge bg={ExchangeCode === "NSE" ? "primary" : "danger"}>
+               {ExchangeCode}
+             </Badge>
++            <Button 
++              variant={isInWatchlist ? "outline-secondary" : "outline-primary"}
++              onClick={handleWatchlistToggle} 
++              disabled={isLoading}
++              className="d-flex align-items-center gap-1"
++            >
++              {isLoading ? (
++                <Spinner animation="border" size="sm" />
++              ) : (
++                <>
++                  {isInWatchlist ? <EyeOff size={16} /> : <Eye size={16} />}
++                  <span>{isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}</span>
++                </>
++              )}
++            </Button>
+           </div>
+           <span className="text-muted">{StockName}</span>
+         </div>
+diff --git a/src/components/trade/TradePage.jsx b/src/components/trade/TradePage.jsx
+index 2890dc1..e53ac4e 100644
+--- a/src/components/trade/TradePage.jsx
++++ b/src/components/trade/TradePage.jsx
+@@ -6,6 +6,7 @@ import TradeCard from './UserTrade';
+ import ActiveTradeWindow from './ActiveTradeWindow';
+ import ClosedTradeWindow from './ClosedTradeWindow';
+ import BuyStockWindow from './BuyStockWindow';
++import TradePageCharts from './TradePageCharts';
+ 
+ const TradePage = () => {
+     const location = useLocation();
+@@ -13,27 +14,35 @@ const TradePage = () => {
+     console.log(trade);
+ 
+     const windowWidth = window.innerWidth;
+-    const chartWidth = windowWidth * 0.5;
++    const chartWidth = Math.floor(windowWidth * 0.6);
+ 
+     return (
+         <>
+             {(trade?.NS && trade?.Stock_Tocken) ? (
+                 <div className="trade-page d-flex">            
+                     <div className="news-widget-container">
+-                        <TradingViewAdvancedChart symbol={trade?.EC+':'+trade?.NS} width={chartWidth} />
++                        <TradePageCharts symbol={trade?.EC+':'+trade?.NS} width={chartWidth} />
+                     </div>
+                     <div className="trade-details-container flex-grow-1">
++                        <div className="alert alert-success" role="alert">
++                            <h2>Buy</h2> 
++                        </div>
+                         <BuyStockWindow trade={trade} />
+                     </div>
+                 </div>
+             ) : (
+                 <div className="trade-page d-flex">            
+                     <div className="news-widget-container">
+-                        <TradingViewAdvancedChart symbol={trade?.ExchangeCode+':'+trade?.StockCode} width={chartWidth} />
++                        <TradePageCharts symbol={trade?.ExchangeCode+':'+trade?.StockCode} width={chartWidth} />
+                     </div>
+                     <div className="trade-details-container flex-grow-1">
+                         {trade.IsActive ? (
+-                            <ActiveTradeWindow trade={trade} />
++                            <>
++                                <div className="alert alert-danger" role="alert">
++                                    <h2>Sell</h2> 
++                                </div>
++                                <ActiveTradeWindow trade={trade} />
++                            </>
+                         ) : (
+                             <ClosedTradeWindow trade={trade} />
+                         )}
+diff --git a/src/components/trade/TradePageCharts.jsx b/src/components/trade/TradePageCharts.jsx
+new file mode 100644
+index 0000000..04e0885
+--- /dev/null
++++ b/src/components/trade/TradePageCharts.jsx
+@@ -0,0 +1,67 @@
++import React, { useEffect, useState } from 'react';
++import TradePage from './TradePage';
++
++const TradePageCharts = ({ symbol, width }) => {
++
++    const [theme, setTheme] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
++
++    useEffect(() => {
++        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
++        const handleChange = (e) => setTheme(e.matches ? 'dark' : 'light');
++        
++        mediaQuery.addEventListener('change', handleChange);
++        
++        return () => {
++        mediaQuery.removeEventListener('change', handleChange);
++        };
++    }, [theme]);
++
++  useEffect(() => {
++    const script = document.createElement('script');
++    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
++    script.async = true;
++    script.innerHTML = JSON.stringify({
++      "width": width || "450",
++      "height": "600",
++      "symbol": symbol || "NASDAQ:AAPL",  // Default to NASDAQ:AAPL if no symbol is provided
++      "interval": "D",
++      "timezone": "Etc/UTC",
++      "theme": theme,
++      "style": "2",
++      "locale": "en",
++      "backgroundColor": theme==='light' ? "rgba(255, 255, 255, 1)" : "#212529",
++      "gridColor": "rgba(66, 66, 66, 0.06)",
++      "hide_top_toolbar": true,
++      "hide_legend": true,
++      "withdateranges": true,
++      "allow_symbol_change": false,
++      "save_image": false,
++      "calendar": false,
++      "hide_volume": true,
++      "support_host": "https://www.tradingview.com"
++    });
++
++    document.getElementById('tradingview-widget').appendChild(script);
++
++    return () => {
++      // Clean up to avoid memory leaks
++      const container = document.getElementById('tradingview-widget');
++      if (container) {
++        container.innerHTML = '';
++      }
++    };
++  }, [symbol, width, theme]);
++
++  return (
++    <div className="tradingview-widget-container">
++      <div id="tradingview-widget" className="tradingview-widget-container__widget"></div>
++      <div className="tradingview-widget-copyright">
++        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
++          <span className="blue-text">Track all markets on TradingView</span>
++        </a>
++      </div>
++    </div>
++  );
++};
++
++export default TradePageCharts;
+\ No newline at end of file
+diff --git a/src/components/trade/TradeProvider.jsx b/src/components/trade/TradeProvider.jsx
+index db2719e..2a5fdaa 100644
+--- a/src/components/trade/TradeProvider.jsx
++++ b/src/components/trade/TradeProvider.jsx
+@@ -116,9 +116,70 @@ export const TradeProvider = ({ children }) => {
+     }
+   };
+ 
++  const addToWatchList = async (stockCode, stockName, stockToken, exchangeCode) => {
++    try {
++      const sanitizedStockToken = stockToken.replace(/[.!#/]/g, "_");
++      const verifiedToken = await VerifyToken(authToken, updateToken);
++      const response = await axios.put(
++        `${API_BASE_URL}/AddToWatchList`,
++        JSON.stringify({
++          authToken: verifiedToken,
++          userID: userInfo.localId,
++          stockCode: stockCode,
++          stockName: stockName,
++          stockToken: sanitizedStockToken,
++          exchangeCode: exchangeCode,
++        }),
++        {
++          headers: {
++            "Content-Type": "application/json",
++          },
++        }
++      );
++      const data = await ValidateResponse(response, addToast);
++      addToast("success", {
++        Header: "Success",
++        Message: "Stock added to watchlist successfully",
++      });
++      return data;
++    } catch (error) {
++      console.error("Error adding to watchlist:", error);
++      throw error;
++    }
++  };
++
++  const removeFromWatchList = async (stockToken) => {
++    try {
++      const sanitizedStockToken = stockToken.replace(/[.!#/]/g, "_");
++      const verifiedToken = await VerifyToken(authToken, updateToken);
++      const response = await axios.delete(
++        `${API_BASE_URL}/RemoveFromWatch`,
++        {
++          data: JSON.stringify({
++            authToken: verifiedToken,
++            userID: userInfo.localId,
++            stockToken: sanitizedStockToken,
++          }),
++          headers: {
++            "Content-Type": "application/json",
++          },
++        }
++      );
++      const data = await response.data;
++      addToast("success", {
++        Header: "Success",
++        Message: "Stock removed from watchlist successfully",
++      });
++      return data;
++    } catch (error) {
++      console.error("Error removing from watchlist:", error);
++      throw error;
++    }
++  };
++
+   return (
+     <TradeContext.Provider
+-      value={{ enterTrade, exitTrade, readUser, getAPI, userData, apiData }}
++      value={{ enterTrade, exitTrade, readUser, getAPI, userData, apiData,addToWatchList, removeFromWatchList }}
+     >
+       {children}
+     </TradeContext.Provider>
+diff --git a/src/components/trade/UserTrade.jsx b/src/components/trade/UserTrade.jsx
+index ba9468a..994da22 100644
+--- a/src/components/trade/UserTrade.jsx
++++ b/src/components/trade/UserTrade.jsx
+@@ -98,7 +98,7 @@ const TradeCard = ({ trade }) => {
+     };
+ 
+     return (
+-        <Card className="w-100 shadow-lg mb-4" onClick={handleClick}>
++        <Card className="w-100 shadow-lg mb-4 card-hover" onClick={handleClick}>
+             <Card.Body>
+                 {/* Header Section */}
+                 <div className="d-flex justify-content-between align-items-center mb-4" >
+diff --git a/src/components/trade/UserWatchItem.jsx b/src/components/trade/UserWatchItem.jsx
+new file mode 100644
+index 0000000..7847316
+--- /dev/null
++++ b/src/components/trade/UserWatchItem.jsx
+@@ -0,0 +1,81 @@
++import React, { useContext, useEffect, useState } from "react";
++import { useNavigate } from 'react-router-dom';
++import { WebSocketContext } from "./WebSocketManager";
++import { Card, Badge } from "react-bootstrap";
++import { TrendingUp, TrendingDown } from "lucide-react";
++
++const UserWatchItem = ({ stock }) => {
++  const { joinSymbol, leaveSymbol, stockData } = useContext(WebSocketContext);
++  const [stockInfo, setStockInfo] = useState(null);
++
++  const navigate = useNavigate();
++
++  const trade = {
++    SN: stock.StockName,
++    NS: stock.StockCode,
++    EC: stock.ExchangeCode,
++    Stock_Tocken: stock.StockToken,
++  };
++
++  useEffect(() => {
++    if (stock && stock.StockToken) {
++      joinSymbol(stock.StockToken);
++    }
++
++    return () => {
++      if (stock && stock.StockToken) {
++        leaveSymbol(stock.StockToken);
++      }
++    };
++  }, [stock, joinSymbol, leaveSymbol]);
++
++  useEffect(() => {
++    if (stock && stock.StockToken && stockData[stock.StockToken]) {
++      setStockInfo(stockData[stock.StockToken]);
++    }
++  }, [stock, stockData]);
++
++  if (!stock) return null;
++
++  const badgeColor = stock.ExchangeCode === "BSE" ? "danger" : "primary";
++  const closeColor =
++    stockInfo && stockInfo.Close > stockInfo.Open ? "green" : "red";
++
++  const formatPrice = (price) =>
++    price?.toLocaleString("en-IN", {
++      style: "currency",
++      currency: "INR",
++    });
++
++    const handleClick = () => {
++        navigate('/trade/TradePage', { state: { trade } });
++    };
++
++  return (
++    <Card className="mb-3 card-hover" onClick={handleClick}>
++      <Card.Header className="d-flex justify-content-between align-items-center">
++        <div>
++          <h6>
++            {stock.StockName}{" "}
++            <Badge bg={badgeColor}>{stock.ExchangeCode}</Badge>
++          </h6>
++          <small className="text-muted">{stock.StockCode}</small>
++        </div>
++        <div>
++          {stockInfo && (
++            <h5
++              className={
++                closeColor === "green" ? "text-success" : "text-danger"
++              }
++            >
++              {closeColor === "green" ? <TrendingUp /> : <TrendingDown />}
++              {formatPrice(stockInfo.Close)}
++            </h5>
++          )}
++        </div>
++      </Card.Header>
++    </Card>
++  );
++};
++
++export default UserWatchItem;
+diff --git a/src/components/trade/UserWatchList.jsx b/src/components/trade/UserWatchList.jsx
+index ba55f07..bd2287d 100644
+--- a/src/components/trade/UserWatchList.jsx
++++ b/src/components/trade/UserWatchList.jsx
+@@ -1,24 +1,30 @@
+-import React, { useState, useEffect } from "react";
++import React, { useEffect } from "react";
+ import { useTrade } from "./TradeProvider";
++import UserWatchItem from "./UserWatchItem";
+ 
+ export const UserWatchList = () => {
+   const { userData } = useTrade();
+   
+   useEffect(() => {
+     if (userData && typeof userData?.watchlist === 'object') {
+-        console.log('User watchlist:');
++        console.log('User watchlist:', userData.watchlist);
+     }
+   }, [userData]);
+ 
+-return (
++  return (
+     <div className="container mt-4">
+-        <h2 className="text-primary mb-3">Watchlist</h2>
+-        <div className="border rounded p-3 ">
+-        <h2>Watchlist</h2>
+-        </div>
+-        
++      <h2 className="text-primary mb-3">Watchlist</h2>
++      <div className="border rounded p-3">
++        {userData && userData.watchlist && Object.keys(userData.watchlist).length > 0 ? (
++          Object.keys(userData.watchlist).map((key, index) => (
++            <UserWatchItem key={index} stock={userData.watchlist[key]} />
++          ))
++        ) : (
++          <p>No items in the watchlist. Look Up Stocks to add.</p>
++        )}
++      </div>
+     </div>
+-);
++  );
+ };
+ 
+ export default UserWatchList;
+\ No newline at end of file
+-- 
+2.47.0.windows.1
+

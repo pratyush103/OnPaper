@@ -2,7 +2,7 @@ import { jwtDecode } from 'jwt-decode'; // Named import
 import { useContext } from 'react';
 import { useAuth } from './AuthContext';
 
-const AuthBaseURL = "https://onpaper-auth.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io/Auth";
+const AuthBaseURL = "http://localhost:8002/Auth" //"https://onpaper-auth.wonderfultree-e5f4d080.centralindia.azurecontainerapps.io/Auth";
 
 
 

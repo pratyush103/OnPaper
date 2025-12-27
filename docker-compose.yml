@@ -1,0 +1,26 @@
+services:
+  main-app:
+    build: 
+      context: C:\Users\Pratyush\Documents\GitHub\OnPaper-CP\OnPaper\
+      dockerfile: C:\Users\Pratyush\Documents\GitHub\OnPaper-CP\OnPaper\DOCKERFILE
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - trade-service
+
+  auth-service:
+    build:
+      context: C:\Users\Pratyush\Documents\Paper-Trading\OnPaper-Auth
+      dockerfile: C:\Users\Pratyush\Documents\Paper-Trading\OnPaper-Auth\OnPaper-Auth\Dockerfile
+    ports:
+      - "8002:8080"
+      - "8003:8081"
+
+  trade-service:
+    build:
+      context: C:\Users\Pratyush\Documents\Paper-Trading\OnPaper-Trade
+      dockerfile: C:\Users\Pratyush\Documents\Paper-Trading\OnPaper-Trade\OnPaper-Trade\Dockerfile
+    ports:
+      - "8000:8082"
+      - "8001:8083"
